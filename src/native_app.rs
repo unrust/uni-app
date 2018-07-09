@@ -22,7 +22,7 @@ enum WindowContext {
 impl WindowContext {
     fn hidpi_factor(&self) -> f32 {
         match self {
-            &WindowContext::Normal(ref w) => w.hidpi_factor(),
+            &WindowContext::Normal(ref w) => w.get_hidpi_factor() as f32,
             _ => 1.0,
         }
     }
@@ -93,7 +93,7 @@ fn translate_event(e: glutin::Event) -> Option<AppEvent> {
                     ElementState::Released => Some(AppEvent::MouseUp(event)),
                 }
             }
-            WindowEvent::CursorMoved { position, .. } => Some(AppEvent::MousePos(position)),
+            WindowEvent::CursorMoved { position, .. } => Some(AppEvent::MousePos(position.into())),
             WindowEvent::KeyboardInput { input, .. } => match input.state {
                 ElementState::Pressed => Some(AppEvent::KeyDown(events::KeyDownEvent {
                     key: get_virtual_key(input),
@@ -110,7 +110,7 @@ fn translate_event(e: glutin::Event) -> Option<AppEvent> {
                     ctrl: input.modifiers.ctrl,
                 })),
             },
-            WindowEvent::Resized(w, h) => Some(AppEvent::Resized((w, h))),
+            WindowEvent::Resized(size) => Some(AppEvent::Resized((size.width as u32, size.height as u32))),
 
             _ => None,
         }
@@ -143,10 +143,14 @@ impl App {
                 None
             };
 
+            let phys_size: glutin::dpi::PhysicalSize = (config.size.0, config.size.1).into();
+            let dpi = events_loop.get_primary_monitor().get_hidpi_factor();
+
             let window = glutin::WindowBuilder::new()
                 .with_title(config.title)
                 .with_fullscreen(monitor)
-                .with_dimensions(config.size.0, config.size.1);
+                .with_resizable(false)
+                .with_dimensions(phys_size.to_logical(dpi));
 
             let context = glutin::ContextBuilder::new()
                 .with_vsync(config.vsync)
@@ -154,8 +158,9 @@ impl App {
                 .with_gl_profile(GlProfile::Core);
 
             let gl_window = glutin::GlWindow::new(window, context, &events_loop).unwrap();
+
             if !config.show_cursor {
-                gl_window.set_cursor_state(CursorState::Hide).unwrap();
+                gl_window.hide_cursor(true);
             }
 
             WindowContext::Normal(gl_window)
@@ -219,10 +224,10 @@ impl App {
             match event {
                 glutin::Event::WindowEvent { ref event, .. } => match event {
                     &glutin::WindowEvent::CloseRequested => running = false,
-                    &glutin::WindowEvent::Resized(w, h) => {
+                    &glutin::WindowEvent::Resized(size) => {
                         // Fixed for Windows which minimized to emit a Resized(0,0) event
-                        if w != 0 && h != 0 {
-                            window.context().resize(w, h);
+                        if size.width != 0.0 && size.height != 0.0 {
+                            window.context().resize((size.width, size.height).into());
                         }
                     }
                     &glutin::WindowEvent::KeyboardInput { input, .. } => {
