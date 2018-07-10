@@ -102,10 +102,9 @@ pub fn translate_virtual_key(c: VirtualKeyCode) -> &'static str {
         Grave => "Backquote",
         Kana => "",
         Kanji => "",
-        LAlt => "",
+        LAlt => "AltLeft",
         LBracket => "BracketLeft",
         LControl => "ControlLeft",
-        LMenu => "AltLeft",
         LShift => "ShiftLeft",
         LWin => "",
         Mail => "",
@@ -127,10 +126,9 @@ pub fn translate_virtual_key(c: VirtualKeyCode) -> &'static str {
         PlayPause => "",
         Power => "",
         PrevTrack => "",
-        RAlt => "",
+        RAlt => "AltRight",
         RBracket => "BracketRight",
         RControl => "ControlRight",
-        RMenu => "AltRight",
         RShift => "ShiftRight",
         RWin => "",
         Semicolon => "Semicolon",
@@ -154,6 +152,9 @@ pub fn translate_virtual_key(c: VirtualKeyCode) -> &'static str {
         WebStop => "",
         Yen => "",
         Caret => "Caret",
+        Copy => "Copy",
+        Paste => "Paste",
+        Cut => "Cut",
     }
 }
 #[cfg(target_os = "macos")]
