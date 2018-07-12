@@ -22,7 +22,7 @@ enum WindowContext {
 impl WindowContext {
     fn hidpi_factor(&self) -> f32 {
         match self {
-            &WindowContext::Normal(ref w) => w.hidpi_factor(),
+            &WindowContext::Normal(ref w) => w.get_hidpi_factor() as f32,
             _ => 1.0,
         }
     }
@@ -74,7 +74,7 @@ fn get_scan_code(input: glutin::KeyboardInput) -> String {
     translate_scan_code(input.scancode).into()
 }
 
-fn translate_event(e: glutin::Event) -> Option<AppEvent> {
+fn translate_event(e: glutin::Event, dpi_factor: f32) -> Option<AppEvent> {
     if let Event::WindowEvent {
         event: winevent, ..
     } = e
@@ -93,7 +93,10 @@ fn translate_event(e: glutin::Event) -> Option<AppEvent> {
                     ElementState::Released => Some(AppEvent::MouseUp(event)),
                 }
             }
-            WindowEvent::CursorMoved { position, .. } => Some(AppEvent::MousePos(position)),
+            WindowEvent::CursorMoved { position, .. } => {
+                let phys = glutin::dpi::PhysicalPosition::from_logical(position, f64::from(dpi_factor));
+                Some(AppEvent::MousePos(phys.into()))
+            },
             WindowEvent::KeyboardInput { input, .. } => match input.state {
                 ElementState::Pressed => Some(AppEvent::KeyDown(events::KeyDownEvent {
                     key: get_virtual_key(input),
@@ -110,7 +113,10 @@ fn translate_event(e: glutin::Event) -> Option<AppEvent> {
                     ctrl: input.modifiers.ctrl,
                 })),
             },
-            WindowEvent::Resized(w, h) => Some(AppEvent::Resized((w, h))),
+            WindowEvent::Resized(size) => {
+                let phys = glutin::dpi::PhysicalSize::from_logical(size, f64::from(dpi_factor));
+                Some(AppEvent::Resized(phys.into()))
+            },
 
             _ => None,
         }
@@ -146,7 +152,8 @@ impl App {
             let window = glutin::WindowBuilder::new()
                 .with_title(config.title)
                 .with_fullscreen(monitor)
-                .with_dimensions(config.size.0, config.size.1);
+                .with_resizable(config.resizable)
+                .with_dimensions((config.size.0, config.size.1).into());
 
             let context = glutin::ContextBuilder::new()
                 .with_vsync(config.vsync)
@@ -154,8 +161,9 @@ impl App {
                 .with_gl_profile(GlProfile::Core);
 
             let gl_window = glutin::GlWindow::new(window, context, &events_loop).unwrap();
+
             if !config.show_cursor {
-                gl_window.set_cursor_state(CursorState::Hide).unwrap();
+                gl_window.hide_cursor(true);
             }
 
             WindowContext::Normal(gl_window)
@@ -213,16 +221,17 @@ impl App {
         use glutin::*;
         let mut running = true;
 
+        let dpi_factor = self.hidpi_factor();
         let (window, events_loop, events) = (&self.window, &mut self.events_loop, &mut self.events);
 
         events_loop.poll_events(|event| {
             match event {
                 glutin::Event::WindowEvent { ref event, .. } => match event {
                     &glutin::WindowEvent::CloseRequested => running = false,
-                    &glutin::WindowEvent::Resized(w, h) => {
+                    &glutin::WindowEvent::Resized(size) => {
                         // Fixed for Windows which minimized to emit a Resized(0,0) event
-                        if w != 0 && h != 0 {
-                            window.context().resize(w, h);
+                        if size.width != 0.0 && size.height != 0.0 {
+                            window.window().resize(size.to_physical(dpi_factor as f64));
                         }
                     }
                     &glutin::WindowEvent::KeyboardInput { input, .. } => {
@@ -240,7 +249,8 @@ impl App {
                 },
                 _ => (),
             };
-            translate_event(event).map(|evt| events.borrow_mut().push(evt));
+
+            translate_event(event, dpi_factor).map(|evt| events.borrow_mut().push(evt));
         });
 
         return running;
