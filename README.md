@@ -2,8 +2,6 @@
 
 [unrust](https://github.com/unrust/unrust) App Module
 
-**This project is under heavily development, all api are very unstable until version 0.2**
-
 ## Usage 
 
 Currently, please reference [unrust](https://github.com/unrust/unrust) for how to use it.
