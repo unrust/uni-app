@@ -1,4 +1,3 @@
-#![feature(nll)]
 #![recursion_limit = "512"]
 
 // wasm-unknown-unknown

@@ -58,7 +58,7 @@ fn main() {
 
 ### As web app (wasm32-unknown-unknown)
 
-The target `wasm32-unknown-unknown` is currently only on the nightly builds as of Jan-30 2018.
+When targetting `wasm32-unknown-unknown`, stdweb currently requires Rust nightly.
 
 ```
 cargo install --force cargo-web # installs web sub command
@@ -69,8 +69,10 @@ cargo web start --example basic --release
 
 ### As desktop app (native-opengl)
 
+Native compilation works with current stable Rust (1.28)
+
 ```
-rustup override set nightly
+rustup override set stable
 cargo run --example basic --release
 ```
 
