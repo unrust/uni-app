@@ -1,10 +1,78 @@
 # unrust / uni-app
 
-[unrust](https://github.com/unrust/unrust) App Module
+[![Build Status](https://travis-ci.org/unrust/uni-app.svg?branch=master)](https://travis-ci.org/unrust/uni-app)
+[![Documentation](https://docs.rs/uni-app/badge.svg)](https://docs.rs/uni-app)
+[![crates.io](https://meritbadge.herokuapp.com/uni-app)](https://crates.io/crates/uni-app)
 
-## Usage 
+This library is a part of [Unrust](https://github.com/unrust/unrust), a pure rust native/wasm game engine.
+This library provides a native/wasm compatibility layer for following components :
+* Window creation
+* Input (mouse + keyboard)
+* File system
 
-Currently, please reference [unrust](https://github.com/unrust/unrust) for how to use it.
+**This project is under heavily development, all api are very unstable until version 0.2**
+
+## Usage
+
+```toml
+[dependencies]
+uni-app = "0.1.*"
+```
+
+```rust
+extern crate uni_app;
+use std::process;
+
+fn main() {
+    // create the game window (native) or canvas (web)
+    let app = uni_app::App::new(uni_app::AppConfig {
+        size: (800, 600),
+        title: "my game".to_owned(),
+        vsync: true,
+        show_cursor: true,
+        headless: false,
+        resizable: true,
+        fullscreen: false,
+    });
+    // start game loop
+    app.run(move |app: &mut uni_app::App| {
+        for evt in app.events.borrow().iter() {
+            // print on stdout (native) or js console (web)
+            uni_app::App::print(format!("{:?}\n",evt));
+            // exit on key ou mouse press
+            match evt {
+                &uni_app::AppEvent::KeyUp(_) => {
+                    process::exit(0);
+                }
+                &uni_app::AppEvent::MouseUp(_) => {
+                    process::exit(0);
+                }
+                _ => (),
+            }
+        }
+    });
+}
+```
+
+## Build
+
+### As web app (wasm32-unknown-unknown)
+
+The target `wasm32-unknown-unknown` is currently only on the nightly builds as of Jan-30 2018.
+
+```
+cargo install --force cargo-web # installs web sub command
+rustup override set nightly
+rustup target install wasm32-unknown-unknown
+cargo web start --example basic --release
+```
+
+### As desktop app (native-opengl)
+
+```
+rustup override set nightly
+cargo run --example basic --release
+```
 
 ## License
 
