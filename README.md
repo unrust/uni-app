@@ -8,7 +8,7 @@ This library is a part of [Unrust](https://github.com/unrust/unrust), a pure rus
 This library provides a native/wasm compatibility layer for following components :
 * Window creation
 * Input (mouse + keyboard)
-* File system
+* File system (ready-only)
 
 **This project is under heavily development, all api are very unstable until version 0.2**
 
