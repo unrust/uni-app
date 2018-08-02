@@ -5,6 +5,7 @@ use glutin::{ElementState, Event, MouseButton, WindowEvent};
 use std::cell::RefCell;
 use std::env;
 use std::os::raw::c_void;
+use std::process;
 use std::rc::Rc;
 use time;
 
@@ -95,9 +96,10 @@ fn translate_event(e: glutin::Event, dpi_factor: f32) -> Option<AppEvent> {
                 }
             }
             WindowEvent::CursorMoved { position, .. } => {
-                let phys = glutin::dpi::PhysicalPosition::from_logical(position, f64::from(dpi_factor));
+                let phys =
+                    glutin::dpi::PhysicalPosition::from_logical(position, f64::from(dpi_factor));
                 Some(AppEvent::MousePos(phys.into()))
-            },
+            }
             WindowEvent::KeyboardInput { input, .. } => match input.state {
                 ElementState::Pressed => Some(AppEvent::KeyDown(events::KeyDownEvent {
                     key: get_virtual_key(input),
@@ -117,7 +119,7 @@ fn translate_event(e: glutin::Event, dpi_factor: f32) -> Option<AppEvent> {
             WindowEvent::Resized(size) => {
                 let phys = glutin::dpi::PhysicalSize::from_logical(size, f64::from(dpi_factor));
                 Some(AppEvent::Resized(phys.into()))
-            },
+            }
 
             _ => None,
         }
@@ -204,6 +206,11 @@ impl App {
     /// print a message on standard output (native) or js console (web)
     pub fn print<T: Into<String>>(msg: T) {
         print!("{}", msg.into());
+    }
+
+    /// exit current process (close the game window). On web target, this does nothing.
+    pub fn exit() {
+        process::exit(0);
     }
 
     /// returns the HiDPI factor for current screen
