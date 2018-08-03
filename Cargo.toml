@@ -1,7 +1,12 @@
 [package]
 name = "uni-app"
 version = "0.1.0"
-authors = ["Edwin Cheng <edwin0cheng@gmail.com>"]
+authors = ["Edwin Cheng <edwin0cheng@gmail.com>", "jice <jice.nospam@gmail.com>"]
+description = "native/wasm compatibility layer for window creation, input and filesystem"
+license = "MIT"
+documentation = "https://docs.rs/uni-app"
+repository = "https://github.com/unrust/uni-app"
+keywords = ["windowing", "input", "filesystem", "wasm"]
 
 [dependencies]
 

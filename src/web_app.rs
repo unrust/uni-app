@@ -158,13 +158,11 @@ impl App {
         canvas.add_event_listener({
             let canvas = canvas.clone();
             let canvas_x: f64 = js! {
-            return @{&canvas}.getBoundingClientRect().left; }
-                .try_into()
-                .unwrap();
+            return @{&canvas}.getBoundingClientRect().left; }.try_into()
+            .unwrap();
             let canvas_y: f64 = js! {
-            return @{&canvas}.getBoundingClientRect().top; }
-                .try_into()
-                .unwrap();
+            return @{&canvas}.getBoundingClientRect().top; }.try_into()
+            .unwrap();
             map_event!{
                 self.events,
                 MouseMoveEvent,
@@ -230,6 +228,8 @@ impl App {
     pub fn print<T: Into<String>>(msg: T) {
         js!{ console.log(@{msg.into()})};
     }
+
+    pub fn exit() {}
 
     pub fn get_params() -> Vec<String> {
         let params = js!{ return window.location.search.substring(1).split("&"); };

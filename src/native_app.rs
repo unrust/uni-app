@@ -5,6 +5,7 @@ use glutin::{ElementState, Event, MouseButton, WindowEvent};
 use std::cell::RefCell;
 use std::env;
 use std::os::raw::c_void;
+use std::process;
 use std::rc::Rc;
 use time;
 
@@ -50,6 +51,7 @@ impl WindowContext {
     }
 }
 
+/// the main application struct
 pub struct App {
     window: WindowContext,
     events_loop: glutin::EventsLoop,
@@ -94,9 +96,10 @@ fn translate_event(e: glutin::Event, dpi_factor: f32) -> Option<AppEvent> {
                 }
             }
             WindowEvent::CursorMoved { position, .. } => {
-                let phys = glutin::dpi::PhysicalPosition::from_logical(position, f64::from(dpi_factor));
+                let phys =
+                    glutin::dpi::PhysicalPosition::from_logical(position, f64::from(dpi_factor));
                 Some(AppEvent::MousePos(phys.into()))
-            },
+            }
             WindowEvent::KeyboardInput { input, .. } => match input.state {
                 ElementState::Pressed => Some(AppEvent::KeyDown(events::KeyDownEvent {
                     key: get_virtual_key(input),
@@ -116,7 +119,7 @@ fn translate_event(e: glutin::Event, dpi_factor: f32) -> Option<AppEvent> {
             WindowEvent::Resized(size) => {
                 let phys = glutin::dpi::PhysicalSize::from_logical(size, f64::from(dpi_factor));
                 Some(AppEvent::Resized(phys.into()))
-            },
+            }
 
             _ => None,
         }
@@ -126,6 +129,7 @@ fn translate_event(e: glutin::Event, dpi_factor: f32) -> Option<AppEvent> {
 }
 
 impl App {
+    /// create a new game window
     pub fn new(config: AppConfig) -> App {
         use glutin::*;
         let events_loop = glutin::EventsLoop::new();
@@ -181,12 +185,14 @@ impl App {
         }
     }
 
+    /// return the command line / URL parameters
     pub fn get_params() -> Vec<String> {
         let mut params: Vec<String> = env::args().collect();
         params.remove(0);
         params
     }
 
+    /// activate or deactivate fullscreen. only works on native target
     pub fn set_fullscreen(&self, b: bool) {
         if let WindowContext::Normal(ref glwindow) = self.window {
             if b {
@@ -197,22 +203,26 @@ impl App {
         }
     }
 
+    /// print a message on standard output (native) or js console (web)
     pub fn print<T: Into<String>>(msg: T) {
         print!("{}", msg.into());
     }
 
+    /// exit current process (close the game window). On web target, this does nothing.
+    pub fn exit() {
+        process::exit(0);
+    }
+
+    /// returns the HiDPI factor for current screen
     pub fn hidpi_factor(&self) -> f32 {
         return self.window.hidpi_factor();
     }
 
-    pub fn window(&self) -> &glutin::GlWindow {
-        &self.window.window()
-    }
-
-    pub fn get_proc_address(&self, name: &str) -> *const c_void {
+    fn get_proc_address(&self, name: &str) -> *const c_void {
         self.window.context().get_proc_address(name) as *const c_void
     }
 
+    /// return the opengl context for this window
     pub fn canvas<'p>(&'p self) -> Box<'p + FnMut(&str) -> *const c_void> {
         Box::new(move |name| self.get_proc_address(name))
     }
@@ -271,6 +281,7 @@ impl App {
         return !self.exiting;
     }
 
+    /// start the game loop, calling provided callback every frame
     pub fn run<'a, F>(mut self, mut callback: F)
     where
         F: FnMut(&mut Self) -> (),
@@ -295,6 +306,7 @@ impl App {
     }
 }
 
+/// return the time since the start of the program in seconds
 pub fn now() -> f64 {
     // precise_time_s() is in second
     // https://doc.rust-lang.org/time/time/fn.precise_time_s.html
