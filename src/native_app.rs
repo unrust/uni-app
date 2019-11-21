@@ -35,7 +35,7 @@ impl WindowContext {
         }
     }
 
-    fn context(&self) -> &glutin::GlContext {
+    fn context(&self) -> &dyn glutin::GlContext {
         match self {
             &WindowContext::Normal(ref w) => w,
             &WindowContext::Headless(ref w) => w,
@@ -56,6 +56,7 @@ pub struct App {
     window: WindowContext,
     events_loop: glutin::EventsLoop,
     exiting: bool,
+    intercept_close_request: bool,
     pub events: Rc<RefCell<Vec<AppEvent>>>,
 }
 
@@ -120,7 +121,7 @@ fn translate_event(e: glutin::Event, dpi_factor: f32) -> Option<AppEvent> {
                 let phys = glutin::dpi::PhysicalSize::from_logical(size, f64::from(dpi_factor));
                 Some(AppEvent::Resized(phys.into()))
             }
-
+            WindowEvent::CloseRequested => Some(AppEvent::CloseRequested),
             _ => None,
         }
     } else {
@@ -181,6 +182,7 @@ impl App {
             window: window,
             events_loop,
             exiting: false,
+            intercept_close_request: config.intercept_close_request,
             events: Rc::new(RefCell::new(Vec::new())),
         }
     }
@@ -223,7 +225,7 @@ impl App {
     }
 
     /// return the opengl context for this window
-    pub fn canvas<'p>(&'p self) -> Box<'p + FnMut(&str) -> *const c_void> {
+    pub fn canvas<'p>(&'p self) -> Box<dyn 'p + FnMut(&str) -> *const c_void> {
         Box::new(move |name| self.get_proc_address(name))
     }
 
@@ -233,11 +235,15 @@ impl App {
 
         let dpi_factor = self.hidpi_factor();
         let (window, events_loop, events) = (&self.window, &mut self.events_loop, &mut self.events);
-
+        let intercept_close_request = self.intercept_close_request;
         events_loop.poll_events(|event| {
             match event {
                 glutin::Event::WindowEvent { ref event, .. } => match event {
-                    &glutin::WindowEvent::CloseRequested => running = false,
+                    &glutin::WindowEvent::CloseRequested => {
+                        if !intercept_close_request {
+                            running = false;
+                        }
+                    }
                     &glutin::WindowEvent::Resized(size) => {
                         // Fixed for Windows which minimized to emit a Resized(0,0) event
                         if size.width != 0.0 && size.height != 0.0 {
