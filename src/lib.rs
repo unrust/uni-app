@@ -49,6 +49,8 @@ pub struct AppConfig {
     pub resizable: bool,
     /// whether the mouse cursor is visible while in the window
     pub show_cursor: bool,
+    /// whether clicking on the window close button exits the program or sends a CloseRequested event
+    pub intercept_close_request: bool,
 }
 
 impl AppConfig {
@@ -61,6 +63,7 @@ impl AppConfig {
             fullscreen: false,
             resizable: true,
             show_cursor: true,
+            intercept_close_request: false,
         }
     }
 }
@@ -141,7 +144,6 @@ pub mod events {
             )
         }
     }
-
 }
 
 pub use events::*;
@@ -161,4 +163,6 @@ pub enum AppEvent {
     Resized((u32, u32)),
     /// mouse cursor position in pixels from the window top-left
     MousePos((f64, f64)),
+    /// window close button was pressed and [`AppConfig.intercept_close_request`] is true
+    CloseRequested,
 }
