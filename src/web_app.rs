@@ -48,7 +48,7 @@ macro_rules! map_event {
 // So basically this function is useless at this moment.
 #[allow(dead_code)]
 fn request_full_screen(canvas: &CanvasElement) {
-    js!{
+    js! {
         var c = @{&canvas};
         if (c.requestFullscreen) {
             c.requestFullscreen();
@@ -78,7 +78,7 @@ impl App {
             .try_into()
             .unwrap();
 
-        js!{
+        js! {
             // setup the buffer size
             // see https://webglfundamentals.org/webgl/lessons/webgl-resizing-the-canvas.html
             var realToCSSPixels = window.devicePixelRatio;
@@ -100,12 +100,12 @@ impl App {
             };
         }
 
-        let device_pixel_ratio: f64 = js!{ return window.devicePixelRatio; }.try_into().unwrap();
+        let device_pixel_ratio: f64 = js! { return window.devicePixelRatio; }.try_into().unwrap();
 
         let body = document().query_selector("body").unwrap().unwrap();
 
         body.append_child(&canvas);
-        js!{
+        js! {
             @{&canvas}.focus();
         }
 
@@ -126,7 +126,7 @@ impl App {
     fn setup_listener(&mut self) {
         let canvas: &CanvasElement = self.canvas();
 
-        canvas.add_event_listener(map_event!{
+        canvas.add_event_listener(map_event! {
             self.events,
             MouseDownEvent,
             MouseDown,
@@ -140,7 +140,7 @@ impl App {
             }},
             false
         });
-        canvas.add_event_listener(map_event!{
+        canvas.add_event_listener(map_event! {
             self.events,
             MouseUpEvent,
             MouseUp,
@@ -158,12 +158,14 @@ impl App {
         canvas.add_event_listener({
             let canvas = canvas.clone();
             let canvas_x: f64 = js! {
-            return @{&canvas}.getBoundingClientRect().left; }.try_into()
+            return @{&canvas}.getBoundingClientRect().left; }
+            .try_into()
             .unwrap();
             let canvas_y: f64 = js! {
-            return @{&canvas}.getBoundingClientRect().top; }.try_into()
+            return @{&canvas}.getBoundingClientRect().top; }
+            .try_into()
             .unwrap();
-            map_event!{
+            map_event! {
                 self.events,
                 MouseMoveEvent,
                 MousePos,
@@ -173,7 +175,7 @@ impl App {
             }
         });
 
-        canvas.add_event_listener(map_event!{
+        canvas.add_event_listener(map_event! {
             self.events,
             KeyDownEvent,
             KeyDown,
@@ -188,17 +190,20 @@ impl App {
             true
         });
 
-        // canvas.add_event_listener(map_event!{
-        //     self.events,
-        //     KeypressEvent,
-        //     KeyPress,
-        //     e,
-        //     events::KeyPressEvent {
-        //         code: e.code()
-        //     }
-        // });
+        canvas.add_event_listener({
+            let events = self.events.clone();
+            move |e: KeyUpEvent| {
+                e.prevent_default();
+                // filter control keys "Tab", "Backspace", ...
+                if e.key().len() == 1 {
+                    events
+                        .borrow_mut()
+                        .push(AppEvent::CharEvent(e.key().chars().next().unwrap()));
+                }
+            }
+        });
 
-        canvas.add_event_listener(map_event!{
+        canvas.add_event_listener(map_event! {
             self.events,
             KeyUpEvent,
             KeyUp,
@@ -216,7 +221,7 @@ impl App {
         canvas.add_event_listener({
             let canvas = canvas.clone();
 
-            map_event!{
+            map_event! {
                 self.events,
                 ResizeEvent,
                 Resized,
@@ -226,13 +231,13 @@ impl App {
     }
 
     pub fn print<T: Into<String>>(msg: T) {
-        js!{ console.log(@{msg.into()})};
+        js! { console.log(@{msg.into()})};
     }
 
     pub fn exit() {}
 
     pub fn get_params() -> Vec<String> {
-        let params = js!{ return window.location.search.substring(1).split("&"); };
+        let params = js! { return window.location.search.substring(1).split("&"); };
         params.try_into().unwrap()
     }
 
