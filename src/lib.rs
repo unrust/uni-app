@@ -159,6 +159,8 @@ pub enum AppEvent {
     KeyDown(KeyDownEvent),
     /// keyboard release
     KeyUp(KeyUpEvent),
+    /// text input events
+    CharEvent(char),
     /// window resize
     Resized((u32, u32)),
     /// mouse cursor position in pixels from the window top-left

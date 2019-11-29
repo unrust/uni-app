@@ -117,6 +117,7 @@ fn translate_event(e: glutin::Event, dpi_factor: f32) -> Option<AppEvent> {
                     ctrl: input.modifiers.ctrl,
                 })),
             },
+            WindowEvent::ReceivedCharacter(c) => Some(AppEvent::CharEvent(c)),
             WindowEvent::Resized(size) => {
                 let phys = glutin::dpi::PhysicalSize::from_logical(size, f64::from(dpi_factor));
                 Some(AppEvent::Resized(phys.into()))
