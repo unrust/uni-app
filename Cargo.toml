@@ -1,6 +1,6 @@
 [package]
 name = "uni-app"
-version = "0.1.2"
+version = "0.1.3"
 authors = ["Edwin Cheng <edwin0cheng@gmail.com>", "jice <jice.nospam@gmail.com>"]
 description = "native/wasm compatibility layer for window creation, input and filesystem"
 license = "MIT"

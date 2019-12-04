@@ -236,6 +236,13 @@ impl App {
 
     pub fn exit() {}
 
+    pub fn get_screen_resolution(&self) -> (u32, u32) {
+        (
+            window().inner_width() as u32,
+            window().inner_height() as u32,
+        )
+    }
+
     pub fn get_params() -> Vec<String> {
         let params = js! { return window.location.search.substring(1).split("&"); };
         params.try_into().unwrap()
