@@ -23,30 +23,30 @@ enum WindowContext {
 impl WindowContext {
     fn hidpi_factor(&self) -> f32 {
         match self {
-            &WindowContext::Normal(ref w) => w.get_hidpi_factor() as f32,
+            WindowContext::Normal(ref w) => w.get_hidpi_factor() as f32,
             _ => 1.0,
         }
     }
 
     fn window(&self) -> &glutin::GlWindow {
         match self {
-            &WindowContext::Normal(ref w) => w,
+            WindowContext::Normal(ref w) => w,
             _ => unimplemented!(),
         }
     }
 
     fn context(&self) -> &dyn glutin::GlContext {
         match self {
-            &WindowContext::Normal(ref w) => w,
-            &WindowContext::Headless(ref w) => w,
+            WindowContext::Normal(ref w) => w,
+            WindowContext::Headless(ref w) => w,
         }
     }
 
     fn swap_buffers(&self) -> Result<(), glutin::ContextError> {
         use glutin::GlContext;
         match self {
-            &WindowContext::Normal(ref w) => w.swap_buffers(),
-            &WindowContext::Headless(_) => Ok(()),
+            WindowContext::Normal(ref w) => w.swap_buffers(),
+            WindowContext::Headless(_) => Ok(()),
         }
     }
 }
@@ -180,11 +180,24 @@ impl App {
         }
 
         App {
-            window: window,
+            window,
             events_loop,
             exiting: false,
             intercept_close_request: config.intercept_close_request,
             events: Rc::new(RefCell::new(Vec::new())),
+        }
+    }
+
+    /// return the screen resolution in physical pixels
+    pub fn get_screen_resolution(&self) -> (u32, u32) {
+        if let WindowContext::Normal(ref glwindow) = self.window {
+            glwindow
+                .window()
+                .get_current_monitor()
+                .get_dimensions()
+                .into()
+        } else {
+            (0, 0)
         }
     }
 
@@ -218,7 +231,7 @@ impl App {
 
     /// returns the HiDPI factor for current screen
     pub fn hidpi_factor(&self) -> f32 {
-        return self.window.hidpi_factor();
+        self.window.hidpi_factor()
     }
 
     fn get_proc_address(&self, name: &str) -> *const c_void {
@@ -285,7 +298,7 @@ impl App {
         self.events.borrow_mut().clear();
         self.window.swap_buffers().unwrap();
 
-        return !self.exiting;
+        !self.exiting
     }
 
     /// start the game loop, calling provided callback every frame
@@ -317,5 +330,5 @@ impl App {
 pub fn now() -> f64 {
     // precise_time_s() is in second
     // https://doc.rust-lang.org/time/time/fn.precise_time_s.html
-    return time::precise_time_s();
+    time::precise_time_s()
 }
