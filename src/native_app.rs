@@ -13,7 +13,8 @@ use AppConfig;
 use AppEvent;
 
 use self::native_keycode::{translate_scan_code, translate_virtual_key};
-use super::events;
+use crate::events;
+use crate::{File, FileSystem};
 
 enum WindowContext {
     Normal(glutin::GlWindow),
@@ -58,6 +59,7 @@ pub struct App {
     exiting: bool,
     intercept_close_request: bool,
     pub events: Rc<RefCell<Vec<AppEvent>>>,
+    dropped_files: Vec<File>,
 }
 
 fn get_virtual_key(input: glutin::KeyboardInput) -> String {
@@ -123,6 +125,9 @@ fn translate_event(e: glutin::Event, dpi_factor: f32) -> Option<AppEvent> {
                 Some(AppEvent::Resized(phys.into()))
             }
             WindowEvent::CloseRequested => Some(AppEvent::CloseRequested),
+            WindowEvent::DroppedFile(path) => {
+                Some(AppEvent::FileDropped(path.to_str().unwrap().to_owned()))
+            }
             _ => None,
         }
     } else {
@@ -185,6 +190,7 @@ impl App {
             exiting: false,
             intercept_close_request: config.intercept_close_request,
             events: Rc::new(RefCell::new(Vec::new())),
+            dropped_files: Vec::new(),
         }
     }
 
@@ -248,7 +254,12 @@ impl App {
         let mut running = true;
 
         let dpi_factor = self.hidpi_factor();
-        let (window, events_loop, events) = (&self.window, &mut self.events_loop, &mut self.events);
+        let (window, events_loop, events, dropped_files) = (
+            &self.window,
+            &mut self.events_loop,
+            &mut self.events,
+            &mut self.dropped_files,
+        );
         let intercept_close_request = self.intercept_close_request;
         events_loop.poll_events(|event| {
             match event {
@@ -275,6 +286,10 @@ impl App {
                             }
                         }
                     }
+                    &glutin::WindowEvent::DroppedFile(ref path) => {
+                        let filepath = path.to_str().unwrap();
+                        dropped_files.push(FileSystem::open(filepath).unwrap());
+                    }
                     _ => (),
                 },
                 _ => (),
@@ -284,6 +299,10 @@ impl App {
         });
 
         return running;
+    }
+
+    pub fn get_dropped_file(&mut self) -> Option<File> {
+        self.dropped_files.pop()
     }
 
     pub fn poll_events<F>(&mut self, callback: F) -> bool

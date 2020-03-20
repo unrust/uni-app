@@ -165,6 +165,8 @@ pub enum AppEvent {
     Resized((u32, u32)),
     /// mouse cursor position in pixels from the window top-left
     MousePos((f64, f64)),
+    /// a file has been dropped on the game window. Get it with `App.get_dropped_file`
+    FileDropped(String),
     /// window close button was pressed and [`AppConfig.intercept_close_request`] is true
     CloseRequested,
 }
