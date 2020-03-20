@@ -1,22 +1,22 @@
 use std;
-use stdweb::web::TypedArray;
 use std::cell::RefCell;
-use std::rc::Rc;
 use std::io::ErrorKind;
+use std::rc::Rc;
 use std::str;
+use stdweb::web::TypedArray;
 
 pub type IoError = std::io::Error;
 
 pub struct FileSystem {}
 
-enum BufferState {
+pub(crate) enum BufferState {
     Empty,
     Buffer(Vec<u8>),
     Error(String),
 }
 
 pub struct File {
-    buffer_state: Rc<RefCell<BufferState>>,
+    pub(crate) buffer_state: Rc<RefCell<BufferState>>,
 }
 
 impl FileSystem {
@@ -41,7 +41,7 @@ impl FileSystem {
             }
         };
 
-        js!{
+        js! {
             var oReq = new XMLHttpRequest();
             var filename = @{s};
             oReq.open("GET", filename, true);

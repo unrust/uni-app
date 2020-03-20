@@ -1,26 +1,26 @@
 use stdweb;
 use AppConfig;
 
-use stdweb::traits::IEvent;
+use stdweb::traits::{IDragEvent, IEvent};
 use stdweb::unstable::TryInto;
 use stdweb::web::event::{
-    IKeyboardEvent, IMouseEvent, KeyDownEvent, KeyUpEvent, MouseButton, MouseDownEvent,
-    MouseMoveEvent, MouseUpEvent, ResizeEvent,
+    DragDropEvent, IKeyboardEvent, IMouseEvent, KeyDownEvent, KeyUpEvent, MouseButton,
+    MouseDownEvent, MouseMoveEvent, MouseUpEvent, ResizeEvent,
 };
 use stdweb::web::html_element::CanvasElement;
-use stdweb::web::window;
-use stdweb::web::IEventTarget;
-use stdweb::web::IHtmlElement;
+use stdweb::web::{window, FileReader, IEventTarget, IHtmlElement, TypedArray};
 
 use std::cell::RefCell;
 use std::rc::Rc;
 
+use crate::{BufferState, File};
 use AppEvent;
 
 pub struct App {
     window: CanvasElement,
     pub events: Rc<RefCell<Vec<AppEvent>>>,
     device_pixel_ratio: f32,
+    dropped_files: Rc<RefCell<Vec<File>>>,
 }
 
 use super::events;
@@ -92,6 +92,11 @@ impl App {
             // Make it focusable
             // https://stackoverflow.com/questions/12886286/addeventlistener-for-keydown-on-canvas
             @{&canvas}.tabIndex = 1;
+
+
+            document.body.addEventListener("dragover", e => {e.prevent_default(); return false;});
+            document.body.addEventListener("dragenter", e => {e.prevent_default(); return false;});
+            document.body.addEventListener("drop", e => {e.prevent_default(); return false;});
         };
 
         if !config.show_cursor {
@@ -115,8 +120,9 @@ impl App {
 
         let mut app = App {
             window: canvas,
-            events: Rc::new(RefCell::new(vec![])),
+            events: Rc::new(RefCell::new(Vec::new())),
             device_pixel_ratio: device_pixel_ratio as f32,
+            dropped_files: Rc::new(RefCell::new(Vec::new())),
         };
         app.setup_listener();
 
@@ -228,6 +234,68 @@ impl App {
                 (canvas.offset_width() as u32, canvas.offset_height() as u32)
             }
         });
+
+        canvas.add_event_listener({
+            let events = self.events.clone();
+            let dropped_files = self.dropped_files.clone();
+            move |e: DragDropEvent| {
+                e.prevent_default();
+                for f in e.data_transfer().unwrap().files() {
+                    let buffer_state = Rc::new(RefCell::new(BufferState::Empty));
+                    let on_get_buffer = {
+                        let buffer_state = buffer_state.clone();
+                        move |ab: TypedArray<u8>| {
+                            let data = ab.to_vec();
+                            if data.len() > 0 {
+                                *buffer_state.borrow_mut() = BufferState::Buffer(data);
+                            }
+                        }
+                    };
+                    let on_error = {
+                        let buffer_state = buffer_state.clone();
+                        move |s: String| {
+                            let msg = format!("Fail to read file from web {}", s);
+                            *buffer_state.borrow_mut() = BufferState::Error(msg);
+                        }
+                    };
+                    let name = f.name();
+                    js! {
+                        var reader = new FileReader();
+                        var fname=@{name};
+                        var on_error_js = function(s){
+                            var on_error = @{on_error};
+                            on_error(s);
+                            on_error.drop();
+                        };
+                        reader.onload = function(e2) {
+                            var on_get_buffer = @{on_get_buffer};
+                            on_get_buffer(new Uint8Array(e2.target.result));
+                            on_get_buffer.drop();
+                        };
+                        reader.onerror = function(e3) {
+                            var err_msg="Error while reading "+fname+" : "+e3;
+                            console.log(err_msg);
+                            on_error_js(err_msg);
+                        };
+                        reader.onabort = function(e4) {
+                            var err_msg="Reading of "+fname+" aborted : "+e4;
+                            console.log(err_msg);
+                            on_error_js(err_msg);
+                        };
+                    }
+                    events
+                        .borrow_mut()
+                        .push(AppEvent::FileDropped(f.name().to_owned()));
+                    dropped_files.borrow_mut().push(File {
+                        buffer_state: buffer_state,
+                    });
+                }
+            }
+        });
+    }
+
+    pub fn get_dropped_file(&mut self) -> Option<File> {
+        self.dropped_files.borrow_mut().pop()
     }
 
     pub fn print<T: Into<String>>(msg: T) {
