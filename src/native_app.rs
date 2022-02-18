@@ -9,8 +9,8 @@ use std::process;
 use std::rc::Rc;
 use time;
 
-use AppConfig;
-use AppEvent;
+use crate::AppConfig;
+use crate::AppEvent;
 
 use self::native_keycode::{translate_scan_code, translate_virtual_key};
 use crate::events;

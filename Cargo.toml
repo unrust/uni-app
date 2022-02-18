@@ -7,6 +7,7 @@ license = "MIT"
 documentation = "https://docs.rs/uni-app"
 repository = "https://github.com/unrust/uni-app"
 keywords = ["windowing", "input", "filesystem", "wasm"]
+edition="2021"
 
 [dependencies]
 
@@ -16,4 +17,5 @@ stdweb =  "0.4.14"
 [target.'cfg(not(target_arch = "wasm32"))'.dependencies]
 glutin = "0.17.0"
 time = "0.1.39"
-
+# fix for missing features in rust 2021 (https://doc.rust-lang.org/nightly/edition-guide/rust-2021/default-cargo-resolver.html)
+winapi = { version="0.3.8", features=["winerror", "winbase", "errhandlingapi"] }
