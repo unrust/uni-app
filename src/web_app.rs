@@ -1,20 +1,19 @@
 use stdweb;
-use AppConfig;
+use crate::AppConfig;
 
 use stdweb::traits::{IDragEvent, IEvent};
-use stdweb::unstable::TryInto;
 use stdweb::web::event::{
     DragDropEvent, IKeyboardEvent, IMouseEvent, KeyDownEvent, KeyUpEvent, MouseButton,
     MouseDownEvent, MouseMoveEvent, MouseUpEvent, ResizeEvent,
 };
 use stdweb::web::html_element::CanvasElement;
-use stdweb::web::{window, FileReader, IEventTarget, IHtmlElement, TypedArray};
+use stdweb::web::{window, IEventTarget, IHtmlElement, TypedArray};
 
 use std::cell::RefCell;
 use std::rc::Rc;
 
 use crate::{BufferState, File};
-use AppEvent;
+use crate::AppEvent;
 
 pub struct App {
     window: CanvasElement,
@@ -72,11 +71,9 @@ impl App {
         }
 
         let _ = stdweb::initialize();
-        let canvas: CanvasElement = document()
-            .create_element("canvas")
-            .unwrap()
-            .try_into()
-            .unwrap();
+        let canvas: CanvasElement = stdweb::unstable::TryInto::try_into(
+                document().create_element("canvas").unwrap()
+            ).unwrap();
 
         js! {
             // setup the buffer size
@@ -105,7 +102,7 @@ impl App {
             };
         }
 
-        let device_pixel_ratio: f64 = js! { return window.devicePixelRatio; }.try_into().unwrap();
+        let device_pixel_ratio: f64 = stdweb::unstable::TryInto::try_into(js! { return window.devicePixelRatio; }).unwrap();
 
         let body = document().query_selector("body").unwrap().unwrap();
 
@@ -163,14 +160,12 @@ impl App {
 
         canvas.add_event_listener({
             let canvas = canvas.clone();
-            let canvas_x: f64 = js! {
-            return @{&canvas}.getBoundingClientRect().left; }
-            .try_into()
-            .unwrap();
-            let canvas_y: f64 = js! {
-            return @{&canvas}.getBoundingClientRect().top; }
-            .try_into()
-            .unwrap();
+            let canvas_x: f64 = stdweb::unstable::TryInto::try_into(js! {
+                return @{&canvas}.getBoundingClientRect().left; }
+            ).unwrap();
+            let canvas_y: f64 = stdweb::unstable::TryInto::try_into(js! {
+                return @{&canvas}.getBoundingClientRect().top; }
+            ).unwrap();
             map_event! {
                 self.events,
                 MouseMoveEvent,
@@ -313,7 +308,7 @@ impl App {
 
     pub fn get_params() -> Vec<String> {
         let params = js! { return window.location.search.substring(1).split("&"); };
-        params.try_into().unwrap()
+        stdweb::unstable::TryInto::try_into(params).unwrap()
     }
 
     pub fn hidpi_factor(&self) -> f32 {
@@ -363,5 +358,5 @@ pub fn now() -> f64 {
     // perforamce now is in ms
     // https://developer.mozilla.org/en-US/docs/Web/API/Performance/now
     let v = js! { return performance.now() / 1000.0; };
-    return v.try_into().unwrap();
+    return stdweb::unstable::TryInto::try_into(v).unwrap();
 }
