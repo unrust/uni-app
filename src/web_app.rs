@@ -122,6 +122,7 @@ impl App {
                 mouse_down_listener.as_ref().unchecked_ref(),
             )
             .unwrap();
+        mouse_down_listener.forget();
         let events = self.events.clone();
         let mouse_up_listener = Closure::<dyn FnMut(_)>::new(move |event: web_sys::MouseEvent| {
             event.prevent_default();
@@ -134,6 +135,7 @@ impl App {
         app_canvas
             .add_event_listener_with_callback("mouseup", mouse_up_listener.as_ref().unchecked_ref())
             .unwrap();
+        mouse_up_listener.forget();
         let events = self.events.clone();
         let move_canvas = self.canvas().clone();
         let mouse_move_listener =
@@ -154,7 +156,7 @@ impl App {
                 mouse_move_listener.as_ref().unchecked_ref(),
             )
             .unwrap();
-
+        mouse_move_listener.forget();
         let events = self.events.clone();
         let key_down_listener =
             Closure::<dyn FnMut(_)>::new(move |event: web_sys::KeyboardEvent| {
@@ -172,7 +174,7 @@ impl App {
         app_canvas
             .add_event_listener_with_callback("keydown", key_down_listener.as_ref().unchecked_ref())
             .unwrap();
-
+        key_down_listener.forget();
         let events = self.events.clone();
         let key_up_listener = Closure::<dyn FnMut(_)>::new(move |event: web_sys::KeyboardEvent| {
             event.prevent_default();
@@ -195,7 +197,7 @@ impl App {
         app_canvas
             .add_event_listener_with_callback("keyup", key_up_listener.as_ref().unchecked_ref())
             .unwrap();
-
+        key_up_listener.forget();
         let events = self.events.clone();
         let resize_canvas = ref_canvas.clone();
         let resize_listener = Closure::<dyn FnMut(_)>::new(move |_: Event| {
@@ -205,7 +207,7 @@ impl App {
             events.borrow_mut().push(AppEvent::Resized((width, height)));
         });
         window().set_onresize(Some(resize_listener.as_ref().unchecked_ref()));
-
+        resize_listener.forget();
         let events = self.events.clone();
         let dropped_files = self.dropped_files.clone();
         let drag_drop_listener = Closure::<dyn FnMut(_)>::new(move |event: web_sys::DragEvent| {
@@ -255,6 +257,7 @@ impl App {
         app_canvas
             .add_event_listener_with_callback("drop", drag_drop_listener.as_ref().unchecked_ref())
             .unwrap();
+        drag_drop_listener.forget();
     }
 
     pub fn get_dropped_file(&mut self) -> Option<File> {
