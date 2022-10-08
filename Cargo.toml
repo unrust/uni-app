@@ -1,21 +1,28 @@
 [package]
 name = "uni-app"
-version = "0.1.4"
-authors = ["Edwin Cheng <edwin0cheng@gmail.com>", "jice <jice.nospam@gmail.com>"]
+version = "0.2.0"
+authors = [
+    "Edwin Cheng <edwin0cheng@gmail.com>",
+    "jice <jice.nospam@gmail.com>"
+]
 description = "native/wasm compatibility layer for window creation, input and filesystem"
 license = "MIT"
 documentation = "https://docs.rs/uni-app"
 repository = "https://github.com/unrust/uni-app"
 keywords = ["windowing", "input", "filesystem", "wasm"]
-edition="2021"
+edition = "2021"
 
 [dependencies]
 
 [target.wasm32-unknown-unknown.dependencies]
-stdweb =  "0.4.14"
+stdweb = "0.4.14"
 
 [target.'cfg(not(target_arch = "wasm32"))'.dependencies]
-glutin = "0.17.0"
-time = "0.1.39"
+glutin = "0.29.1"
+time = "0.1.44"
 # fix for missing features in rust 2021 (https://doc.rust-lang.org/nightly/edition-guide/rust-2021/default-cargo-resolver.html)
-winapi = { version="0.3.8", features=["winerror", "winbase", "errhandlingapi"] }
+winapi = { version = "0.3.9", features = [
+    "winerror",
+    "winbase",
+    "errhandlingapi"
+] }
