@@ -1,0 +1,7 @@
+[package]
+name = "uni-app"
+version = "0.2.0"
+edition = "2021"
+
+[target.wasm32-unknown-unknown.dependencies]
+wasm-bindgen = "0.2.83"

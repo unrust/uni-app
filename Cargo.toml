@@ -12,10 +12,38 @@ repository = "https://github.com/unrust/uni-app"
 keywords = ["windowing", "input", "filesystem", "wasm"]
 edition = "2021"
 
+[lib]
+crate-type = ["cdylib", "rlib"]
+
 [dependencies]
 
 [target.wasm32-unknown-unknown.dependencies]
-stdweb = "0.4.14"
+wasm-bindgen = "0.2.83"
+js-sys = "0.3.60"
+web-sys = { version = "0.3.60", features = [
+    "HtmlCanvasElement",
+    "Document",
+    "HtmlElement",
+    "Event",
+    "MouseEvent",
+    "KeyboardEvent",
+    "DragEvent",
+    "ProgressEvent",
+    "EventTarget",
+    "DataTransfer",
+    "File",
+    "FileReader",
+    "FileList",
+    "DomRect",
+    "Window",
+    "Performance",
+    "Location",
+    "console",
+    "Element",
+    "CssStyleDeclaration",
+    "XmlHttpRequest",
+    "XmlHttpRequestResponseType",
+] }
 
 [target.'cfg(not(target_arch = "wasm32"))'.dependencies]
 glutin = "0.29.1"

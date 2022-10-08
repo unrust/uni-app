@@ -4,6 +4,7 @@
 ### Changed
 - upgrade to rust edition 2021
 - upgrade to glutin 0.29.1
+- replace unmaintained cargo-web/stdweb with wasm_bindgen/web-sys
 
 ## [0.1.4] - 2020-03-20
 ### Added

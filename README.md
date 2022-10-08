@@ -55,10 +55,9 @@ fn main() {
 
 ### As web app (wasm32-unknown-unknown)
 
+Switch to wasm_bindgen/web-sys in progress. Instructions to be updated
 ```
-cargo install --force cargo-web # installs web sub command
 rustup target install wasm32-unknown-unknown
-cargo web start --example basic --release
 ```
 
 ### As desktop app (native-opengl)

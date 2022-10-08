@@ -3,7 +3,10 @@ use std::cell::RefCell;
 use std::io::ErrorKind;
 use std::rc::Rc;
 use std::str;
-use stdweb::web::TypedArray;
+
+use js_sys::Uint8Array;
+use wasm_bindgen::{prelude::*, JsCast};
+use web_sys::{XmlHttpRequest, XmlHttpRequestResponseType};
 
 pub type IoError = std::io::Error;
 
@@ -20,57 +23,42 @@ pub struct File {
 }
 
 impl FileSystem {
-    pub fn open(s: &str) -> Result<File, IoError> {
+    pub fn open(file_url: &str) -> Result<File, IoError> {
         let buffer_state = Rc::new(RefCell::new(BufferState::Empty));
 
-        let on_get_buffer = {
-            let buffer_state = buffer_state.clone();
-            move |ab: TypedArray<u8>| {
-                let data = ab.to_vec();
-                if data.len() > 0 {
-                    *buffer_state.borrow_mut() = BufferState::Buffer(data);
+        let ref_req = Rc::new(RefCell::new(XmlHttpRequest::new().unwrap()));
+        let req = &ref_req.borrow();
+        req.open("GET", file_url).unwrap();
+        req.set_response_type(XmlHttpRequestResponseType::Arraybuffer);
+        let load_req = ref_req.clone();
+        let load_buffer_state = buffer_state.clone();
+        req.set_onload(Some(
+            Closure::<dyn FnMut(_)>::new(move |_: web_sys::ProgressEvent| {
+                let req = load_req.borrow();
+                let status = req.status().unwrap();
+                if status == 200 {
+                    if let Ok(data) = req.response() {
+                        let array = Uint8Array::new(&data);
+                        *load_buffer_state.borrow_mut() = BufferState::Buffer(array.to_vec());
+                        return;
+                    }
                 }
-            }
-        };
-
-        let on_error = {
-            let buffer_state = buffer_state.clone();
-            move |s: String| {
-                let msg = format!("Fail to read file from web {}", s);
-                *buffer_state.borrow_mut() = BufferState::Error(msg);
-            }
-        };
-
-        js! {
-            var oReq = new XMLHttpRequest();
-            var filename = @{s};
-            oReq.open("GET", filename, true);
-            oReq.responseType = "arraybuffer";
-
-            var on_error_js = function(s){
-                var on_error = @{on_error};
-                on_error(s);
-                on_error.drop();
-            };
-
-            oReq.onload = function (oEvent) {
-                var status = oReq.status;
-                var arrayBuffer = oReq.response; // Note: not oReq.responseText
-                if (status == 200 && arrayBuffer) {
-                    var on_get_buffer = @{on_get_buffer};
-                    on_get_buffer(new Uint8Array(arrayBuffer));
-                    on_get_buffer.drop();
-                } else {
-                    on_error_js("Fail to get array buffer from network..");
-                }
-            };
-
-            oReq.onerror = function(oEvent) {
-                on_error_js("Fail to read from network..");
-            };
-
-            oReq.send(null);
-        }
+                *load_buffer_state.borrow_mut() =
+                    BufferState::Error("Fail to read file from web".to_string());
+            })
+            .as_ref()
+            .unchecked_ref(),
+        ));
+        let err_buffer_state = buffer_state.clone();
+        req.set_onerror(Some(
+            Closure::<dyn FnMut(_)>::new(move |_: web_sys::ProgressEvent| {
+                *err_buffer_state.borrow_mut() =
+                    BufferState::Error("Fail to read file from web".to_string());
+            })
+            .as_ref()
+            .unchecked_ref(),
+        ));
+        req.send().unwrap();
 
         Ok(File {
             buffer_state: buffer_state,
