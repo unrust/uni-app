@@ -2,10 +2,6 @@
 
 // wasm-unknown-unknown
 #[cfg(target_arch = "wasm32")]
-#[macro_use]
-extern crate stdweb;
-
-#[cfg(target_arch = "wasm32")]
 #[path = "web_app.rs"]
 pub mod sys;
 

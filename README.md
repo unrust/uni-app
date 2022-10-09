@@ -10,13 +10,11 @@ This library provides a native/wasm compatibility layer for following components
 * Input (mouse + keyboard)
 * File system (ready-only)
 
-**This project is under heavily development, all api are very unstable until version 0.2**
-
 ## Usage
 
 ```toml
 [dependencies]
-uni-app = "0.1.*"
+uni-app = "0.2.*"
 ```
 
 ```rust
@@ -57,20 +55,31 @@ fn main() {
 
 ### As web app (wasm32-unknown-unknown)
 
-As of February 18 2019, both native and wasm targets compile on stable channel (rust 1.39.0 / stdweb 0.4.14).
-
+Install wasm32 target :
 ```
-cargo install --force cargo-web # installs web sub command
 rustup target install wasm32-unknown-unknown
-cargo web start --example basic --release
 ```
+Install [wasm-pack](https://rustwasm.github.io/wasm-pack/installer/)
+and [npm](https://www.npmjs.com/get-npm)
+
+Compile the demo with
+```
+wasm-pack build examples
+```
+This creates a wasm package in examples/pkg
+
+Run the demo with
+```
+cd www
+npm install
+npm run start
+```
+
+Open your browser at http://localhost:8080/
 
 ### As desktop app (native-opengl)
 
-Native compilation works with current stable Rust (1.39)
-
 ```
-rustup override set stable
 cargo run --example basic --release
 ```
 

@@ -1,0 +1,14 @@
+[package]
+name = "uni-app-example"
+version = "0.2.0"
+edition = "2021"
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+path = "basic.rs"
+
+[dependencies]
+uni-app = { path = ".." }
+
+[target.wasm32-unknown-unknown.dependencies]
+wasm-bindgen = "0.2.83"

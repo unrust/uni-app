@@ -2,6 +2,10 @@ Cargo.lock
 /target/
 **/*.rs.bk
 **/.DS_Store
-
 /.vscode
 /rls
+examples/target
+examples/pkg
+www/node_modules
+www/dist
+www/package-lock.json
