@@ -23,7 +23,7 @@ use crate::{BufferState, File};
 
 #[derive(Clone)]
 pub struct App {
-    app_canvas: Rc<RefCell<HtmlCanvasElement>>,
+    app_canvas: HtmlCanvasElement,
     pub events: Rc<RefCell<Vec<AppEvent>>>,
     device_pixel_ratio: f32,
     dropped_files: Rc<RefCell<Vec<File>>>,
@@ -93,7 +93,7 @@ impl App {
         }
 
         let mut app = App {
-            app_canvas: Rc::new(RefCell::new(app_canvas)),
+            app_canvas,
             events: Rc::new(RefCell::new(Vec::new())),
             device_pixel_ratio: device_pixel_ratio as f32,
             dropped_files: Rc::new(RefCell::new(Vec::new())),
@@ -104,9 +104,6 @@ impl App {
     }
 
     fn setup_listener(&mut self) {
-        let ref_canvas = self.canvas();
-        let app_canvas: &HtmlCanvasElement = &ref_canvas.borrow();
-
         let events = self.events.clone();
         let mouse_down_listener =
             Closure::<dyn FnMut(_)>::new(move |event: web_sys::MouseEvent| {
@@ -116,7 +113,7 @@ impl App {
                         button: event.button() as usize,
                     }));
             });
-        app_canvas
+        self.app_canvas
             .add_event_listener_with_callback(
                 "mousedown",
                 mouse_down_listener.as_ref().unchecked_ref(),
@@ -132,16 +129,15 @@ impl App {
                     button: event.button() as usize,
                 }));
         });
-        app_canvas
+        self.app_canvas
             .add_event_listener_with_callback("mouseup", mouse_up_listener.as_ref().unchecked_ref())
             .unwrap();
         mouse_up_listener.forget();
         let events = self.events.clone();
-        let move_canvas = self.canvas().clone();
+        let move_canvas = self.app_canvas.clone();
         let mouse_move_listener =
             Closure::<dyn FnMut(_)>::new(move |event: web_sys::MouseEvent| {
-                let canvas = move_canvas.borrow();
-                let canvas_rect = canvas.get_bounding_client_rect();
+                let canvas_rect = move_canvas.get_bounding_client_rect();
                 let canvas_left = canvas_rect.left();
                 let canvas_top = canvas_rect.top();
                 event.prevent_default();
@@ -150,7 +146,7 @@ impl App {
                     event.client_y() as f64 - canvas_top,
                 )));
             });
-        app_canvas
+        self.app_canvas
             .add_event_listener_with_callback(
                 "mousemove",
                 mouse_move_listener.as_ref().unchecked_ref(),
@@ -171,7 +167,7 @@ impl App {
                         ctrl: event.ctrl_key(),
                     }));
             });
-        app_canvas
+        self.app_canvas
             .add_event_listener_with_callback("keydown", key_down_listener.as_ref().unchecked_ref())
             .unwrap();
         key_down_listener.forget();
@@ -194,16 +190,15 @@ impl App {
                     ctrl: event.ctrl_key(),
                 }));
         });
-        app_canvas
+        self.app_canvas
             .add_event_listener_with_callback("keyup", key_up_listener.as_ref().unchecked_ref())
             .unwrap();
         key_up_listener.forget();
         let events = self.events.clone();
-        let resize_canvas = ref_canvas.clone();
+        let resize_canvas = self.app_canvas.clone();
         let resize_listener = Closure::<dyn FnMut(_)>::new(move |_: Event| {
-            let canvas = &resize_canvas.borrow();
-            let width = canvas.offset_width() as u32;
-            let height = canvas.offset_height() as u32;
+            let width = resize_canvas.offset_width() as u32;
+            let height = resize_canvas.offset_height() as u32;
             events.borrow_mut().push(AppEvent::Resized((width, height)));
         });
         window().set_onresize(Some(resize_listener.as_ref().unchecked_ref()));
@@ -254,7 +249,7 @@ impl App {
                 }
             }
         });
-        app_canvas
+        self.app_canvas
             .add_event_listener_with_callback("drop", drag_drop_listener.as_ref().unchecked_ref())
             .unwrap();
         drag_drop_listener.forget();
@@ -307,8 +302,8 @@ impl App {
         }));
         request_animation_frame(g.borrow().as_ref().unwrap());
     }
-    pub fn canvas(&self) -> Rc<RefCell<HtmlCanvasElement>> {
-        self.app_canvas.clone()
+    pub fn canvas(&self) -> &HtmlCanvasElement {
+        &self.app_canvas
     }
 
     pub fn set_fullscreen(&mut self, _b: bool) {

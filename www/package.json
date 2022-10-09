@@ -1,7 +1,6 @@
 {
     "name": "uni-app-demo",
     "version": "0.2.0",
-    "description": "create an app to consume rust-generated wasm packages",
     "main": "index.js",
     "scripts": {
         "start": "webpack-dev-server"
