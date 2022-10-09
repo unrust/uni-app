@@ -32,32 +32,28 @@ impl FileSystem {
         req.set_response_type(XmlHttpRequestResponseType::Arraybuffer);
         let load_req = ref_req.clone();
         let load_buffer_state = buffer_state.clone();
-        req.set_onload(Some(
-            Closure::<dyn FnMut(_)>::new(move |_: web_sys::ProgressEvent| {
-                let req = load_req.borrow();
-                let status = req.status().unwrap();
-                if status == 200 {
-                    if let Ok(data) = req.response() {
-                        let array = Uint8Array::new(&data);
-                        *load_buffer_state.borrow_mut() = BufferState::Buffer(array.to_vec());
-                        return;
-                    }
+        let load_listener = Closure::<dyn FnMut(_)>::new(move |_: web_sys::ProgressEvent| {
+            let req = load_req.borrow();
+            let status = req.status().unwrap();
+            if status == 200 {
+                if let Ok(data) = req.response() {
+                    let array = Uint8Array::new(&data);
+                    *load_buffer_state.borrow_mut() = BufferState::Buffer(array.to_vec());
+                    return;
                 }
-                *load_buffer_state.borrow_mut() =
-                    BufferState::Error("Fail to read file from web".to_string());
-            })
-            .as_ref()
-            .unchecked_ref(),
-        ));
+            }
+            *load_buffer_state.borrow_mut() =
+                BufferState::Error("Fail to read file from web".to_string());
+        });
+        req.set_onload(Some(load_listener.as_ref().unchecked_ref()));
+        load_listener.forget();
         let err_buffer_state = buffer_state.clone();
-        req.set_onerror(Some(
-            Closure::<dyn FnMut(_)>::new(move |_: web_sys::ProgressEvent| {
-                *err_buffer_state.borrow_mut() =
-                    BufferState::Error("Fail to read file from web".to_string());
-            })
-            .as_ref()
-            .unchecked_ref(),
-        ));
+        let err_listener = Closure::<dyn FnMut(_)>::new(move |_: web_sys::ProgressEvent| {
+            *err_buffer_state.borrow_mut() =
+                BufferState::Error("Fail to read file from web".to_string());
+        });
+        req.set_onerror(Some(err_listener.as_ref().unchecked_ref()));
+        err_listener.forget();
         req.send().unwrap();
 
         Ok(File {
