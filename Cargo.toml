@@ -11,6 +11,7 @@ documentation = "https://docs.rs/uni-app"
 repository = "https://github.com/unrust/uni-app"
 keywords = ["windowing", "input", "filesystem", "wasm"]
 edition = "2021"
+exclude = ["www/*"]
 
 [lib]
 crate-type = ["cdylib", "rlib"]
