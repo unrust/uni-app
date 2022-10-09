@@ -1,6 +1,6 @@
 # Changelog
 
-## [0.2.0] - Unreleased
+## [0.2.0] - 2020-10-10
 ### Changed
 - upgrade to rust edition 2021
 - upgrade to glutin 0.29.1
