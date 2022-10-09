@@ -9,7 +9,6 @@ use glutin::event::ModifiersState;
 use glutin::event::MouseButton;
 use glutin::event::VirtualKeyCode;
 use glutin::event::WindowEvent;
-use glutin::event_loop::ControlFlow;
 use glutin::event_loop::EventLoop;
 use glutin::monitor::VideoMode;
 use glutin::window::Fullscreen;
@@ -91,7 +90,7 @@ fn get_virtual_key(input: KeyboardInput) -> String {
 }
 
 fn get_scan_code(input: KeyboardInput) -> String {
-    translate_scan_code(input.scancode).into()
+    translate_scan_code(input.scancode & 0xFF).into()
 }
 
 fn translate_event(e: Event<()>, modifiers: &ModifiersState) -> Option<AppEvent> {
@@ -257,11 +256,13 @@ impl App {
         Box::new(move |name| self.get_proc_address(name))
     }
 
-    fn handle_event(&mut self, event: Event<()>) -> bool {
+    fn handle_event(&mut self, event: Event<()>) -> (bool, bool) {
         let mut running = true;
+        let mut next_frame = false;
         match event {
-            Event::RedrawRequested(_) => {
-                self.window.swap_buffers().unwrap();
+            Event::RedrawRequested(_) => {}
+            Event::MainEventsCleared => {
+                next_frame = true;
             }
             Event::WindowEvent { ref event, .. } => match event {
                 WindowEvent::CloseRequested => {
@@ -302,7 +303,7 @@ impl App {
             self.events.borrow_mut().push(app_event);
         }
 
-        return running;
+        (running, next_frame)
     }
 
     pub fn get_dropped_file(&mut self) -> Option<File> {
@@ -316,11 +317,16 @@ impl App {
     {
         let events_loop = self.events_loop.take().unwrap();
         events_loop.run(move |event, _, control_flow| {
-            if !self.handle_event(event) {
-                *control_flow = ControlFlow::Exit;
+            control_flow.set_poll();
+            let (running, next_frame) = self.handle_event(event);
+            if !running {
+                control_flow.set_exit();
             }
-            callback(&mut self);
-            self.events.borrow_mut().clear();
+            if next_frame {
+                callback(&mut self);
+                self.events.borrow_mut().clear();
+                self.window.swap_buffers().unwrap();
+            }
         });
     }
 }
