@@ -1,6 +1,10 @@
 # Changelog
 
-## [0.2.0] - 2020-10-10
+## [0.2.1] - Unreleased
+### Fixed
+- fixed get_param on wasm crashing if the URL had no parameters
+
+## [0.2.0] - 2022-10-10
 ### Changed
 - upgrade to rust edition 2021
 - upgrade to glutin 0.29.1

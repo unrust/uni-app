@@ -78,6 +78,7 @@ impl App {
         document
             .add_event_listener_with_callback("drop", closure.as_ref().unchecked_ref())
             .unwrap();
+        closure.forget();
 
         if !config.show_cursor {
             app_canvas.style().set_property("cursor", "none").unwrap();
@@ -275,13 +276,17 @@ impl App {
 
     pub fn get_params() -> Vec<String> {
         let location = window().location().search().unwrap();
-        // remove the leading ?
-        let params = &location[1..];
-        // return vector of "name=value" strings
-        params
-            .split("&")
-            .map(|s| s.to_owned())
-            .collect::<Vec<String>>()
+        if location.is_empty() {
+            Vec::new()
+        } else {
+            // remove the leading ?
+            let params = &location[1..];
+            // return vector of "name=value" strings
+            params
+                .split("&")
+                .map(|s| s.to_owned())
+                .collect::<Vec<String>>()
+        }
     }
 
     pub fn hidpi_factor(&self) -> f32 {
