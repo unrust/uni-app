@@ -2,7 +2,8 @@
 
 ## [0.2.1] - Unreleased
 ### Fixed
-- fixed get_param on wasm crashing if the URL had no parameters
+- get_param on wasm crashing if the URL had no parameters
+- right mouse button context menu was not disabled on web platform
 
 ## [0.2.0] - 2022-10-10
 ### Changed

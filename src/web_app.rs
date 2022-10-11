@@ -78,6 +78,9 @@ impl App {
         document
             .add_event_listener_with_callback("drop", closure.as_ref().unchecked_ref())
             .unwrap();
+        app_canvas
+            .add_event_listener_with_callback("contextmenu", closure.as_ref().unchecked_ref())
+            .unwrap();
         closure.forget();
 
         if !config.show_cursor {
