@@ -1,6 +1,6 @@
 # Changelog
 
-## [0.2.1] - Unreleased
+## [0.2.1] - 2022-10-11
 ### Fixed
 - get_param on wasm crashing if the URL had no parameters
 - right mouse button context menu was not disabled on web platform
