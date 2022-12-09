@@ -68,6 +68,8 @@ impl AppConfig {
 pub mod events {
     use std::fmt;
 
+    pub use glutin::event::VirtualKeyCode;
+
     #[derive(Debug, Clone)]
     /// data associated with a mouse button press/release event
     pub struct MouseButtonEvent {
@@ -82,10 +84,12 @@ pub mod events {
     /// Warning, there are some slight variations from one OS to another, for example the `Command`, `F13`, `F14`, `F15` keys
     /// only exist on Mac.
     pub struct KeyDownEvent {
-        /// scancode : top left letter is "KeyQ" even on an azerty keyboard
+        /// virtual key code string : top left letter is "KeyQ" on qwerty, "KeyA" on azerty
         pub code: String,
-        /// virtual key code : top left letter is "KeyQ" on qwerty, "KeyA" on azerty
+        /// text of key
         pub key: String,
+        /// virtual key code
+        pub key_code: VirtualKeyCode,
         /// whether a shift key is pressed
         pub shift: bool,
         /// whether an alt key is pressed

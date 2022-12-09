@@ -1,8 +1,11 @@
+mod web_keycode;
+
 use crate::AppConfig;
 use js_sys::Uint8Array;
 use wasm_bindgen::__rt::IntoJsResult;
 use wasm_bindgen::prelude::*;
 use wasm_bindgen::JsCast;
+use web_keycode::*;
 use web_sys::Event;
 use web_sys::FileReader;
 use web_sys::HtmlCanvasElement;
@@ -166,6 +169,7 @@ impl App {
                     .push(AppEvent::KeyDown(events::KeyDownEvent {
                         code: event.code(),
                         key: event.key(),
+                        key_code: get_virtual_key(event).unwrap_or(VirtualKeyCode::Unlabeled),
                         shift: event.shift_key(),
                         alt: event.alt_key(),
                         ctrl: event.ctrl_key(),

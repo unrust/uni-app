@@ -117,6 +117,7 @@ fn translate_event(e: Event<()>, modifiers: &ModifiersState) -> Option<AppEvent>
                 ElementState::Pressed => Some(AppEvent::KeyDown(events::KeyDownEvent {
                     key: get_virtual_key(input),
                     code: get_scan_code(input),
+                    key_code: input.virtual_keycode.unwrap(),
                     shift: modifiers.shift(),
                     alt: modifiers.alt(),
                     ctrl: modifiers.ctrl(),
@@ -300,7 +301,24 @@ impl App {
         };
 
         if let Some(app_event) = translate_event(event, &self.modifiers_state) {
-            self.events.borrow_mut().push(app_event);
+            // println!("uni app event - {:?}", app_event);
+            let mut ev = self.events.borrow_mut();
+            if match app_event {
+                AppEvent::CharEvent(ch) => match ev.iter_mut().last() {
+                    // eat char events for backspace
+                    Some(AppEvent::KeyDown(key_down)) => {
+                        key_down.key = ch.to_string();
+                        match key_down.key_code {
+                            VirtualKeyCode::Back | VirtualKeyCode::Delete => false,
+                            _ => true,
+                        }
+                    }
+                    _ => true,
+                },
+                _ => true,
+            } {
+                ev.push(app_event);
+            }
         }
 
         (running, next_frame)
