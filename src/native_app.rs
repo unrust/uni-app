@@ -1,18 +1,6 @@
 mod native_keycode;
 
 use glutin;
-use glutin::dpi::LogicalSize;
-use glutin::event::ElementState;
-use glutin::event::Event;
-use glutin::event::KeyboardInput;
-use glutin::event::ModifiersState;
-use glutin::event::MouseButton;
-use glutin::event::VirtualKeyCode;
-use glutin::event::WindowEvent;
-use glutin::event_loop::EventLoop;
-use glutin::monitor::VideoMode;
-use glutin::window::Fullscreen;
-use glutin::window::WindowBuilder;
 use glutin::Context;
 use glutin::PossiblyCurrent;
 use glutin::WindowedContext;
@@ -22,6 +10,18 @@ use std::os::raw::c_void;
 use std::process;
 use std::rc::Rc;
 use time;
+use winit::dpi::LogicalSize;
+use winit::event::ElementState;
+use winit::event::Event;
+use winit::event::KeyboardInput;
+use winit::event::ModifiersState;
+use winit::event::MouseButton;
+use winit::event::VirtualKeyCode;
+use winit::event::WindowEvent;
+use winit::event_loop::EventLoop;
+use winit::monitor::VideoMode;
+use winit::window::Fullscreen;
+use winit::window::WindowBuilder;
 
 use crate::AppConfig;
 use crate::AppEvent;
@@ -351,7 +351,6 @@ impl App {
 
 /// return the time since the start of the program in seconds
 pub fn now() -> f64 {
-    // precise_time_s() is in second
-    // https://doc.rust-lang.org/time/time/fn.precise_time_s.html
-    time::precise_time_s()
+    let t = time::OffsetDateTime::now_utc() - time::OffsetDateTime::UNIX_EPOCH;
+    t.as_seconds_f64()
 }

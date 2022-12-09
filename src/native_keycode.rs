@@ -1,4 +1,4 @@
-use glutin::event::VirtualKeyCode;
+use winit::event::VirtualKeyCode;
 
 pub fn translate_virtual_key(c: VirtualKeyCode) -> &'static str {
     match c {

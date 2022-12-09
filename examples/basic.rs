@@ -26,7 +26,7 @@ fn main() {
     app.run(move |app: &mut uni_app::App| {
         for evt in app.events.borrow().iter() {
             // print on stdout (native) or js console (web)
-            uni_app::App::print(format!("{:?}\n", evt));
+            uni_app::App::print(format!("{:?}", evt));
             // exit on key or mouse press
             match evt {
                 &uni_app::AppEvent::KeyUp(_) => {

@@ -9,12 +9,12 @@ pub mod sys;
 #[path = "web_fs.rs"]
 pub mod fs;
 
-// NOT wasm-unknown-unknown
-#[cfg(not(target_arch = "wasm32"))]
-extern crate glutin;
+// // NOT wasm-unknown-unknown
+// #[cfg(not(target_arch = "wasm32"))]
+// extern crate glutin;
 
-#[cfg(not(target_arch = "wasm32"))]
-extern crate time;
+// #[cfg(not(target_arch = "wasm32"))]
+// extern crate time;
 
 #[cfg(not(target_arch = "wasm32"))]
 #[path = "native_app.rs"]
@@ -68,7 +68,7 @@ impl AppConfig {
 pub mod events {
     use std::fmt;
 
-    pub use glutin::event::VirtualKeyCode;
+    pub use winit::event::VirtualKeyCode;
 
     #[derive(Debug, Clone)]
     /// data associated with a mouse button press/release event
