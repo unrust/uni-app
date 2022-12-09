@@ -234,7 +234,7 @@ impl App {
 
     /// print a message on standard output (native) or js console (web)
     pub fn print<T: Into<String>>(msg: T) {
-        print!("{}", msg.into());
+        println!("{}", msg.into());
     }
 
     /// exit current process (close the game window). On web target, this does nothing.
