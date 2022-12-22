@@ -29,6 +29,7 @@ pub mod fs;
 pub use self::fs::*;
 pub use self::sys::*;
 
+#[derive(Clone, Debug, Default)]
 /// game window configuration
 pub struct AppConfig {
     /// the window title (only visible on native target)
@@ -109,6 +110,8 @@ pub mod events {
         pub code: String,
         /// virtual key code : top left letter is "KeyQ" on qwerty, "KeyA" on azerty
         pub key: String,
+        /// virtual key code
+        pub key_code: VirtualKeyCode,
         /// whether a shift key is pressed
         pub shift: bool,
         /// whether an alt key is pressed

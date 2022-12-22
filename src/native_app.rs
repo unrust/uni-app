@@ -125,6 +125,7 @@ fn translate_event(e: Event<()>, modifiers: &ModifiersState) -> Option<AppEvent>
                 ElementState::Released => Some(AppEvent::KeyUp(events::KeyUpEvent {
                     key: get_virtual_key(input),
                     code: get_scan_code(input),
+                    key_code: input.virtual_keycode.unwrap(),
                     shift: modifiers.shift(),
                     alt: modifiers.alt(),
                     ctrl: modifiers.ctrl(),

@@ -9,6 +9,7 @@ use web_keycode::*;
 use web_sys::Event;
 use web_sys::FileReader;
 use web_sys::HtmlCanvasElement;
+use winit::event::VirtualKeyCode;
 
 // use stdweb::traits::{IDragEvent, IEvent};
 // use stdweb::web::event::{
@@ -169,7 +170,7 @@ impl App {
                     .push(AppEvent::KeyDown(events::KeyDownEvent {
                         code: event.code(),
                         key: event.key(),
-                        key_code: get_virtual_key(event).unwrap_or(VirtualKeyCode::Unlabeled),
+                        key_code: get_virtual_key(&event).unwrap_or(VirtualKeyCode::Unlabeled),
                         shift: event.shift_key(),
                         alt: event.alt_key(),
                         ctrl: event.ctrl_key(),
@@ -193,6 +194,7 @@ impl App {
                 .push(AppEvent::KeyUp(events::KeyUpEvent {
                     code: event.code(),
                     key: event.key(),
+                    key_code: get_virtual_key(&event).unwrap_or(VirtualKeyCode::Unlabeled),
                     shift: event.shift_key(),
                     alt: event.alt_key(),
                     ctrl: event.ctrl_key(),

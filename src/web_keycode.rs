@@ -1,7 +1,8 @@
 use web_sys::KeyboardEvent;
+use winit::event::VirtualKeyCode;
 
 pub fn get_virtual_key(event: &KeyboardEvent) -> Option<VirtualKeyCode> {
-    let code = match event.code {
+    let code = match event.code().as_str() {
         "Digit1" => VirtualKeyCode::Key1,
         "Digit2" => VirtualKeyCode::Key2,
         "Digit3" => VirtualKeyCode::Key3,
