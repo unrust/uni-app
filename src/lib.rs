@@ -69,6 +69,7 @@ pub mod events {
     use std::fmt;
     
     #[derive(Debug, Clone, PartialEq, Eq)]
+    /// keyboard key
     pub enum Key {
         /// The '1' key over the letters.
         Key1,
@@ -271,6 +272,7 @@ pub mod events {
     }
 
     #[derive(Debug, Clone)]
+    /// mouse button
     pub enum MouseButton {
         Left,
         Middle,
@@ -286,12 +288,12 @@ pub mod events {
 
     #[derive(Clone)]
     /// data associated with a key press event
-    /// Possible values for the scancode/virtual key code can be found in unrust/uni-app's `translate_scan_code`
+    /// Possible values for the scancode can be found in unrust/uni-app's `translate_scan_code`
     /// [function](https://github.com/unrust/uni-app/blob/41246b070567e3267f128fff41ededf708149d60/src/native_keycode.rs#L160).
     /// Warning, there are some slight variations from one OS to another, for example the `Command`, `F13`, `F14`, `F15` keys
     /// only exist on Mac.
     pub struct KeyDownEvent {
-        /// scancode : top left letter is `Key::Q` even on an azerty keyboard
+        /// scancode : top left letter is "KeyQ" even on an azerty keyboard
         pub code: String,
         /// virtual key code : top left letter is `Key::Q` on qwerty, `Key::A` on azerty
         pub key: Key,
@@ -305,7 +307,7 @@ pub mod events {
 
     #[derive(Clone)]
     /// data associated with a key release event
-    /// Possible values for the scancode/virtual key code can be found in unrust/uni-app's `translate_scan_code`
+    /// Possible values for the scancode can be found in unrust/uni-app's `translate_scan_code`
     /// [function](https://github.com/unrust/uni-app/blob/41246b070567e3267f128fff41ededf708149d60/src/native_keycode.rs#L160).
     /// Warning, there are some slight variations from one OS to another, for example the `Command`, `F13`, `F14`, `F15` keys
     /// only exist on Mac.
