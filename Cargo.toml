@@ -1,6 +1,6 @@
 [package]
 name = "uni-app"
-version = "0.2.1"
+version = "0.3.0"
 authors = [
     "Edwin Cheng <edwin0cheng@gmail.com>",
     "jice <jice.nospam@gmail.com>"

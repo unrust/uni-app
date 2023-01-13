@@ -1,6 +1,9 @@
 # Changelog
 
 ## [Unreleased]
+### Changed
+- keyboard and mouse API revamped KeyUp/DownEvent.code and MouseButtonEvent.button are now enums
+
 ### Fixed
 - App:print use println on native target to have the same behavior as wasm
 
