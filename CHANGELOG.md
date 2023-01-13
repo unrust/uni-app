@@ -1,5 +1,12 @@
 # Changelog
 
+## [Unreleased]
+### Fixed
+- App:print use println on native target to have the same behavior as wasm
+
+### Added
+- support for VirtualKeyCode::Apostrophe on mac
+
 ## [0.2.1] - 2022-10-11
 ### Fixed
 - get_param on wasm crashing if the URL had no parameters
