@@ -1,4 +1,5 @@
 extern crate uni_app;
+use uni_app::ScanCode;
 
 #[cfg(target_arch = "wasm32")]
 use wasm_bindgen::prelude::*;
@@ -30,7 +31,7 @@ fn main() {
             uni_app::App::print(format!("{:?}", evt));
             // exit on key or mouse press
             match &evt {
-                uni_app::AppEvent::KeyUp(ev) if ev.code == "Escape" => {
+                uni_app::AppEvent::KeyUp(ev) if ev.code == ScanCode::Escape => {
                     uni_app::App::exit();
                 }
                 _ => (),

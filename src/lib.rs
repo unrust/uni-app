@@ -67,23 +67,199 @@ impl AppConfig {
 /// keyboard and mouse events
 pub mod events {
     use std::fmt;
+    
+    #[derive(Debug, Clone, Copy, Hash, PartialEq, Eq)]
+    /// keyboard key scancode
+    pub enum ScanCode {
+        /// The '1' key over the letters.
+        Key1,
+        /// The '2' key over the letters.
+        Key2,
+        /// The '3' key over the letters.
+        Key3,
+        /// The '4' key over the letters.
+        Key4,
+        /// The '5' key over the letters.
+        Key5,
+        /// The '6' key over the letters.
+        Key6,
+        /// The '7' key over the letters.
+        Key7,
+        /// The '8' key over the letters.
+        Key8,
+        /// The '9' key over the letters.
+        Key9,
+        /// The '0' key over the 'O' and 'P' keys.
+        Key0,
+
+        A,
+        B,
+        C,
+        D,
+        E,
+        F,
+        G,
+        H,
+        I,
+        J,
+        K,
+        L,
+        M,
+        N,
+        O,
+        P,
+        Q,
+        R,
+        S,
+        T,
+        U,
+        V,
+        W,
+        X,
+        Y,
+        Z,
+
+        /// The Escape key, next to F1.
+        Escape,
+
+        F1,
+        F2,
+        F3,
+        F4,
+        F5,
+        F6,
+        F7,
+        F8,
+        F9,
+        F10,
+        F11,
+        F12,
+        F13,
+        F14,
+        F15,
+        F16,
+        F17,
+        F18,
+        F19,
+        F20,
+        F21,
+        F22,
+        F23,
+        F24,
+
+        /// Print Screen/SysRq.
+        Snapshot,
+        /// Scroll Lock.
+        ScrollLock,
+        /// Pause/Break key, next to Scroll lock.
+        Pause,
+
+        /// `Insert`, next to Backspace.
+        Insert,
+        Home,
+        Delete,
+        End,
+        PageDown,
+        PageUp,
+
+        Left,
+        Up,
+        Right,
+        Down,
+
+        /// The Backspace key, right over Enter.
+        Backspace,
+        /// The Enter key.
+        Enter,
+        /// The space bar.
+        Space,
+
+        /// The "Compose" key on Linux.
+        Compose,
+
+        Caret,
+
+        Numlock,
+        Numpad0,
+        Numpad1,
+        Numpad2,
+        Numpad3,
+        Numpad4,
+        Numpad5,
+        Numpad6,
+        Numpad7,
+        Numpad8,
+        Numpad9,
+        NumpadAdd,
+        NumpadDivide,
+        NumpadDecimal,
+        NumpadComma,
+        NumpadEnter,
+        NumpadEqual,
+        NumpadMultiply,
+        NumpadSubtract,
+
+        Apostrophe,
+        Asterisk,
+        Backslash,
+        CapsLock,
+        Colon,
+        Comma,
+        Convert,
+        Equal,
+        Backquote,
+        LAlt,
+        LBracket,
+        LCtrl,
+        LShift,
+        LWin,
+        Mail,
+        MediaSelect,
+        MediaStop,
+        Minus,
+        Mute,
+        Period,
+        Plus,
+        RAlt,
+        RBracket,
+        RCtrl,
+        RShift,
+        RWin,
+        Semicolon,
+        Slash,
+        Tab,
+        Underline,
+        Copy,
+        Paste,
+        Cut,
+
+        Unknown,
+    }
+
+    #[derive(Debug, Clone, Copy, Hash, PartialEq, Eq)]
+    /// mouse button
+    pub enum MouseButton {
+        Left,
+        Middle,
+        Right,
+        Other(usize),
+    }
 
     #[derive(Debug, Clone)]
     /// data associated with a mouse button press/release event
     pub struct MouseButtonEvent {
-        /// the button number (0=left, 1=middle, 2=right, ...)
-        pub button: usize,
+        pub button: MouseButton,
     }
 
     #[derive(Clone)]
     /// data associated with a key press event
-    /// Possible values for the scancode/virtual key code can be found in unrust/uni-app's `translate_scan_code`
+    /// Possible values for the virtual key code can be found in unrust/uni-app's `translate_scan_code`
     /// [function](https://github.com/unrust/uni-app/blob/41246b070567e3267f128fff41ededf708149d60/src/native_keycode.rs#L160).
     /// Warning, there are some slight variations from one OS to another, for example the `Command`, `F13`, `F14`, `F15` keys
     /// only exist on Mac.
     pub struct KeyDownEvent {
-        /// scancode : top left letter is "KeyQ" even on an azerty keyboard
-        pub code: String,
+        /// scancode : top left letter is `Key::Q` even on an azerty keyboard
+        pub code: ScanCode,
         /// virtual key code : top left letter is "KeyQ" on qwerty, "KeyA" on azerty
         pub key: String,
         /// whether a shift key is pressed
@@ -96,13 +272,13 @@ pub mod events {
 
     #[derive(Clone)]
     /// data associated with a key release event
-    /// Possible values for the scancode/virtual key code can be found in unrust/uni-app's `translate_scan_code`
+    /// Possible values for the virtual key code can be found in unrust/uni-app's `translate_scan_code`
     /// [function](https://github.com/unrust/uni-app/blob/41246b070567e3267f128fff41ededf708149d60/src/native_keycode.rs#L160).
     /// Warning, there are some slight variations from one OS to another, for example the `Command`, `F13`, `F14`, `F15` keys
     /// only exist on Mac.
     pub struct KeyUpEvent {
-        /// scancode : top left letter is "KeyQ" even on an azerty keyboard
-        pub code: String,
+        /// scancode : top left letter is `Key::Q` even on an azerty keyboard
+        pub code: ScanCode,
         /// virtual key code : top left letter is "KeyQ" on qwerty, "KeyA" on azerty
         pub key: String,
         /// whether a shift key is pressed
@@ -117,7 +293,7 @@ pub mod events {
         fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
             write!(
                 f,
-                "{} {} {} {} {}",
+                "{} {} {} {:?} {}",
                 if self.shift { "shift" } else { "" },
                 if self.alt { "alt" } else { "" },
                 if self.ctrl { "ctrl" } else { "" },
@@ -131,7 +307,7 @@ pub mod events {
         fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
             write!(
                 f,
-                "{} {} {} {} {}",
+                "{} {} {} {:?} {}",
                 if self.shift { "shift" } else { "" },
                 if self.alt { "alt" } else { "" },
                 if self.ctrl { "ctrl" } else { "" },
