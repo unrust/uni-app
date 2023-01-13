@@ -29,7 +29,7 @@ fn main() {
         for evt in app.events.borrow().iter() {
             // print on stdout (native) or js console (web)
             uni_app::App::print(format!("{:?}", evt));
-            // exit on key or mouse press
+            // exit when pressing escape
             match &evt {
                 uni_app::AppEvent::KeyUp(ev) if ev.code == ScanCode::Escape => {
                     uni_app::App::exit();

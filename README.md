@@ -14,7 +14,7 @@ This library provides a native/wasm compatibility layer for following components
 
 ```toml
 [dependencies]
-uni-app = "0.2.*"
+uni-app = "0.3.*"
 ```
 
 ```rust
@@ -35,13 +35,10 @@ fn main() {
     app.run(move |app: &mut uni_app::App| {
         for evt in app.events.borrow().iter() {
             // print on stdout (native) or js console (web)
-            uni_app::App::print(format!("{:?}\n", evt));
-            // exit on key ou mouse press
-            match evt {
-                &uni_app::AppEvent::KeyUp(_) => {
-                    uni_app::App::exit();
-                }
-                &uni_app::AppEvent::MouseUp(_) => {
+            uni_app::App::print(format!("{:?}", evt));
+            // exit when pressing escape
+            match &evt {
+                uni_app::AppEvent::KeyUp(ev) if ev.code == ScanCode::Escape => {
                     uni_app::App::exit();
                 }
                 _ => (),
@@ -93,6 +90,8 @@ Licensed under either of
 at your option.
 
 ### Contribution
+
+You can contribute to this library through pull requests. If you do so, please update the CHANGELOG.md and CREDITS.md files. If you provide a new feature, consider adding an example as a tutorial/showcase.
 
 Unless you explicitly state otherwise, any contribution intentionally submitted
 for inclusion in the work by you, as defined in the Apache-2.0 license, shall be dual licensed as above, without any
