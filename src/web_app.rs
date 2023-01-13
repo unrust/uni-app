@@ -1,3 +1,5 @@
+mod web_keycode;
+
 use crate::AppConfig;
 use js_sys::Uint8Array;
 use wasm_bindgen::__rt::IntoJsResult;
@@ -29,6 +31,7 @@ pub struct App {
     dropped_files: Rc<RefCell<Vec<File>>>,
 }
 
+use self::web_keycode::get_virtual_key;
 use super::events;
 
 // In browser request full screen can only called under event handler.
@@ -111,10 +114,17 @@ impl App {
         let events = self.events.clone();
         let mouse_down_listener =
             Closure::<dyn FnMut(_)>::new(move |event: web_sys::MouseEvent| {
+                let mouse_button = match event.button() as usize {
+                    0 => events::MouseButton::Left,
+                    1 => events::MouseButton::Middle,
+                    2 => events::MouseButton::Right,
+                    val => events::MouseButton::Other(val as usize),
+                };
+
                 events
                     .borrow_mut()
                     .push(AppEvent::MouseDown(events::MouseButtonEvent {
-                        button: event.button() as usize,
+                        button: mouse_button,
                     }));
             });
         self.app_canvas
@@ -126,11 +136,18 @@ impl App {
         mouse_down_listener.forget();
         let events = self.events.clone();
         let mouse_up_listener = Closure::<dyn FnMut(_)>::new(move |event: web_sys::MouseEvent| {
+            let mouse_button = match event.button() as usize {
+                0 => events::MouseButton::Left,
+                1 => events::MouseButton::Middle,
+                2 => events::MouseButton::Right,
+                val => events::MouseButton::Other(val as usize),
+            };
+
             event.prevent_default();
             events
                 .borrow_mut()
                 .push(AppEvent::MouseUp(events::MouseButtonEvent {
-                    button: event.button() as usize,
+                    button: mouse_button,
                 }));
         });
         self.app_canvas
@@ -165,7 +182,7 @@ impl App {
                     .borrow_mut()
                     .push(AppEvent::KeyDown(events::KeyDownEvent {
                         code: event.code(),
-                        key: event.key(),
+                        key: get_virtual_key(&event.code()),
                         shift: event.shift_key(),
                         alt: event.alt_key(),
                         ctrl: event.ctrl_key(),
@@ -188,7 +205,7 @@ impl App {
                 .borrow_mut()
                 .push(AppEvent::KeyUp(events::KeyUpEvent {
                     code: event.code(),
-                    key: event.key(),
+                    key: get_virtual_key(&event.key()),
                     shift: event.shift_key(),
                     alt: event.alt_key(),
                     ctrl: event.ctrl_key(),

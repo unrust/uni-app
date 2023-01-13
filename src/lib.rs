@@ -68,7 +68,7 @@ impl AppConfig {
 pub mod events {
     use std::fmt;
     
-    #[derive(Debug, Clone, PartialEq, Eq)]
+    #[derive(Debug, Clone, Copy, Hash, PartialEq, Eq)]
     /// keyboard key
     pub enum Key {
         /// The '1' key over the letters.
@@ -199,23 +199,15 @@ pub mod events {
         NumpadMultiply,
         NumpadSubtract,
 
-        AbntC1,
-        AbntC2,
         Apostrophe,
-        Apps,
         Asterisk,
-        At,
-        Ax,
         Backslash,
-        Calculator,
         CapsLock,
         Colon,
         Comma,
         Convert,
         Equal,
         Backquote,
-        Kana,
-        Kanji,
         LAlt,
         LBracket,
         LCtrl,
@@ -227,19 +219,8 @@ pub mod events {
         MediaStop,
         Minus,
         Mute,
-        MyComputer,
-        // also called "Next"
-        NavigateForward,
-        // also called "Prior"
-        NavigateBackward,
-        NextTrack,
-        NoConvert,
-        OEM102,
         Period,
-        PlayPause,
         Plus,
-        Power,
-        PrevTrack,
         RAlt,
         RBracket,
         RCtrl,
@@ -247,23 +228,8 @@ pub mod events {
         RWin,
         Semicolon,
         Slash,
-        Sleep,
-        Stop,
-        Sysrq,
         Tab,
         Underline,
-        Unlabeled,
-        VolumeDown,
-        VolumeUp,
-        Wake,
-        WebBack,
-        WebFavorites,
-        WebForward,
-        WebHome,
-        WebRefresh,
-        WebSearch,
-        WebStop,
-        Yen,
         Copy,
         Paste,
         Cut,
@@ -271,7 +237,7 @@ pub mod events {
         Unknown,
     }
 
-    #[derive(Debug, Clone)]
+    #[derive(Debug, Clone, Copy, Hash, PartialEq, Eq)]
     /// mouse button
     pub enum MouseButton {
         Left,
