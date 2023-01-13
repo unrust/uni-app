@@ -328,7 +328,7 @@ pub mod events {
         fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
             write!(
                 f,
-                "{} {} {} {:?} {:?}",
+                "{} {} {} {} {:?}",
                 if self.shift { "shift" } else { "" },
                 if self.alt { "alt" } else { "" },
                 if self.ctrl { "ctrl" } else { "" },
@@ -342,7 +342,7 @@ pub mod events {
         fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
             write!(
                 f,
-                "{} {} {} {:?} {:?}",
+                "{} {} {} {} {:?}",
                 if self.shift { "shift" } else { "" },
                 if self.alt { "alt" } else { "" },
                 if self.ctrl { "ctrl" } else { "" },
