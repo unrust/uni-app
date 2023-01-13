@@ -69,7 +69,7 @@ pub mod events {
     use std::fmt;
     
     #[derive(Debug, Clone, Copy, Hash, PartialEq, Eq)]
-    /// keyboard key
+    /// keyboard key scancode
     pub enum ScanCode {
         /// The '1' key over the letters.
         Key1,
