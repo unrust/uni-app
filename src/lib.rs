@@ -67,7 +67,7 @@ impl AppConfig {
 /// keyboard and mouse events
 pub mod events {
     use std::fmt;
-    
+
     #[derive(Debug, Clone, Copy, Hash, PartialEq, Eq)]
     /// keyboard key scancode
     pub enum ScanCode {
@@ -258,7 +258,7 @@ pub mod events {
     /// Warning, there are some slight variations from one OS to another, for example the `Command`, `F13`, `F14`, `F15` keys
     /// only exist on Mac.
     pub struct KeyDownEvent {
-        /// scancode : top left letter is `Key::Q` even on an azerty keyboard
+        /// scancode : top left letter is `ScanCode::Q` even on an azerty keyboard
         pub code: ScanCode,
         /// virtual key code : top left letter is "KeyQ" on qwerty, "KeyA" on azerty
         pub key: String,
@@ -277,7 +277,7 @@ pub mod events {
     /// Warning, there are some slight variations from one OS to another, for example the `Command`, `F13`, `F14`, `F15` keys
     /// only exist on Mac.
     pub struct KeyUpEvent {
-        /// scancode : top left letter is `Key::Q` even on an azerty keyboard
+        /// scancode : top left letter is `ScanCode::Q` even on an azerty keyboard
         pub code: ScanCode,
         /// virtual key code : top left letter is "KeyQ" on qwerty, "KeyA" on azerty
         pub key: String,
