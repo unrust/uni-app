@@ -31,7 +31,7 @@ pub struct App {
     dropped_files: Rc<RefCell<Vec<File>>>,
 }
 
-use self::web_keycode::get_virtual_key;
+use self::web_keycode::translate_scan_code;
 use super::events;
 
 // In browser request full screen can only called under event handler.
@@ -181,8 +181,8 @@ impl App {
                 events
                     .borrow_mut()
                     .push(AppEvent::KeyDown(events::KeyDownEvent {
-                        code: event.code(),
-                        key: get_virtual_key(&event.code()),
+                        code: translate_scan_code(&event.code()),
+                        key: event.key(),
                         shift: event.shift_key(),
                         alt: event.alt_key(),
                         ctrl: event.ctrl_key(),
@@ -204,8 +204,8 @@ impl App {
             events
                 .borrow_mut()
                 .push(AppEvent::KeyUp(events::KeyUpEvent {
-                    code: event.code(),
-                    key: get_virtual_key(&event.key()),
+                    code: translate_scan_code(&event.code()),
+                    key: event.key(),
                     shift: event.shift_key(),
                     alt: event.alt_key(),
                     ctrl: event.ctrl_key(),

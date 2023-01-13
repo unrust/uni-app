@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.3.1] - 2023-01-13
+### Fixed
+- fixed wasm target compilation
+
 ## [0.3.0] - 2023-01-13
 ### Changed
 - keyboard and mouse API revamped KeyUp/DownEvent.code and MouseButtonEvent.button are now enums
