@@ -217,7 +217,7 @@ pub mod events {
         Kanji,
         LAlt,
         LBracket,
-        LControl,
+        LCtrl,
         LShift,
         LWin,
         Command,
@@ -241,7 +241,7 @@ pub mod events {
         PrevTrack,
         RAlt,
         RBracket,
-        RControl,
+        RCtrl,
         RShift,
         RWin,
         Semicolon,
@@ -292,7 +292,7 @@ pub mod events {
     /// only exist on Mac.
     pub struct KeyDownEvent {
         /// scancode : top left letter is `Key::Q` even on an azerty keyboard
-        pub code: Key,
+        pub code: String,
         /// virtual key code : top left letter is `Key::Q` on qwerty, `Key::A` on azerty
         pub key: Key,
         /// whether a shift key is pressed
@@ -311,7 +311,7 @@ pub mod events {
     /// only exist on Mac.
     pub struct KeyUpEvent {
         /// scancode : top left letter is "KeyQ" even on an azerty keyboard
-        pub code: Key,
+        pub code: String,
         /// virtual key code : top left letter is `Key::Q` on qwerty, `Key::A` on azerty
         pub key: Key,
         /// whether a shift key is pressed

@@ -77,18 +77,14 @@ pub struct App {
 }
 
 fn get_virtual_key(input: KeyboardInput) -> events::Key {
-    if translate_scan_code(input.scancode & 0xFF) == events::Key::Unknown {
-        return events::Key::Unknown;
-    }
-
     match input.virtual_keycode {
         Some(k) => translate_virtual_key(k),
         None => events::Key::Unknown,
     }
 }
 
-fn get_scan_code(input: KeyboardInput) -> events::Key {
-    translate_scan_code(input.scancode & 0xFF)
+fn get_scan_code(input: KeyboardInput) -> String {
+    translate_scan_code(input.scancode & 0xFF).into()
 }
 
 fn translate_event(e: Event<()>, modifiers: &ModifiersState) -> Option<AppEvent> {
