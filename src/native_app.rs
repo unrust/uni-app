@@ -76,21 +76,19 @@ pub struct App {
     fullscreen_resolution: VideoMode,
 }
 
-fn get_virtual_key(input: KeyboardInput) -> String {
+fn get_virtual_key(input: KeyboardInput) -> events::Key {
+    if translate_scan_code(input.scancode & 0xFF) == events::Key::Unknown {
+        return events::Key::Unknown;
+    }
+
     match input.virtual_keycode {
-        Some(k) => {
-            let mut s = translate_virtual_key(k).into();
-            if s == "" {
-                s = format!("{:?}", k);
-            }
-            s
-        }
-        None => "".into(),
+        Some(k) => translate_virtual_key(k),
+        None => events::Key::Unknown,
     }
 }
 
-fn get_scan_code(input: KeyboardInput) -> String {
-    translate_scan_code(input.scancode & 0xFF).into()
+fn get_scan_code(input: KeyboardInput) -> events::Key {
+    translate_scan_code(input.scancode & 0xFF)
 }
 
 fn translate_event(e: Event<()>, modifiers: &ModifiersState) -> Option<AppEvent> {
@@ -100,13 +98,13 @@ fn translate_event(e: Event<()>, modifiers: &ModifiersState) -> Option<AppEvent>
     {
         match winevent {
             WindowEvent::MouseInput { state, button, .. } => {
-                let button_num = match button {
-                    MouseButton::Left => 0,
-                    MouseButton::Middle => 1,
-                    MouseButton::Right => 2,
-                    MouseButton::Other(val) => val as usize,
+                let mouse_button = match button {
+                    MouseButton::Left => events::MouseButton::Left,
+                    MouseButton::Middle => events::MouseButton::Middle,
+                    MouseButton::Right => events::MouseButton::Right,
+                    MouseButton::Other(val) => events::MouseButton::Other(val as usize),
                 };
-                let event = events::MouseButtonEvent { button: button_num };
+                let event = events::MouseButtonEvent { button: mouse_button };
                 match state {
                     ElementState::Pressed => Some(AppEvent::MouseDown(event)),
                     ElementState::Released => Some(AppEvent::MouseUp(event)),
