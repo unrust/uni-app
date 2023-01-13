@@ -76,15 +76,21 @@ pub struct App {
     fullscreen_resolution: VideoMode,
 }
 
-fn get_virtual_key(input: KeyboardInput) -> events::Key {
+fn get_virtual_key(input: KeyboardInput) -> String {
     match input.virtual_keycode {
-        Some(k) => translate_virtual_key(k),
-        None => events::Key::Unknown,
+        Some(k) => {
+            let mut s = translate_virtual_key(k).into();
+            if s == "" {
+                s = format!("{:?}", k);
+            }
+            s
+        }
+        None => "".into(),
     }
 }
 
-fn get_scan_code(input: KeyboardInput) -> String {
-    translate_scan_code(input.scancode & 0xFF).into()
+fn get_scan_code(input: KeyboardInput) -> events::ScanCode {
+    translate_scan_code(input.scancode & 0xFF)
 }
 
 fn translate_event(e: Event<()>, modifiers: &ModifiersState) -> Option<AppEvent> {

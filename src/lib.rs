@@ -70,7 +70,7 @@ pub mod events {
     
     #[derive(Debug, Clone, Copy, Hash, PartialEq, Eq)]
     /// keyboard key
-    pub enum Key {
+    pub enum ScanCode {
         /// The '1' key over the letters.
         Key1,
         /// The '2' key over the letters.
@@ -213,7 +213,6 @@ pub mod events {
         LCtrl,
         LShift,
         LWin,
-        Command,
         Mail,
         MediaSelect,
         MediaStop,
@@ -254,15 +253,15 @@ pub mod events {
 
     #[derive(Clone)]
     /// data associated with a key press event
-    /// Possible values for the scancode can be found in unrust/uni-app's `translate_scan_code`
+    /// Possible values for the virtual key code can be found in unrust/uni-app's `translate_scan_code`
     /// [function](https://github.com/unrust/uni-app/blob/41246b070567e3267f128fff41ededf708149d60/src/native_keycode.rs#L160).
     /// Warning, there are some slight variations from one OS to another, for example the `Command`, `F13`, `F14`, `F15` keys
     /// only exist on Mac.
     pub struct KeyDownEvent {
-        /// scancode : top left letter is "KeyQ" even on an azerty keyboard
-        pub code: String,
-        /// virtual key code : top left letter is `Key::Q` on qwerty, `Key::A` on azerty
-        pub key: Key,
+        /// scancode : top left letter is `Key::Q` even on an azerty keyboard
+        pub code: ScanCode,
+        /// virtual key code : top left letter is "KeyQ" on qwerty, "KeyA" on azerty
+        pub key: String,
         /// whether a shift key is pressed
         pub shift: bool,
         /// whether an alt key is pressed
@@ -273,15 +272,15 @@ pub mod events {
 
     #[derive(Clone)]
     /// data associated with a key release event
-    /// Possible values for the scancode can be found in unrust/uni-app's `translate_scan_code`
+    /// Possible values for the virtual key code can be found in unrust/uni-app's `translate_scan_code`
     /// [function](https://github.com/unrust/uni-app/blob/41246b070567e3267f128fff41ededf708149d60/src/native_keycode.rs#L160).
     /// Warning, there are some slight variations from one OS to another, for example the `Command`, `F13`, `F14`, `F15` keys
     /// only exist on Mac.
     pub struct KeyUpEvent {
-        /// scancode : top left letter is "KeyQ" even on an azerty keyboard
-        pub code: String,
-        /// virtual key code : top left letter is `Key::Q` on qwerty, `Key::A` on azerty
-        pub key: Key,
+        /// scancode : top left letter is `Key::Q` even on an azerty keyboard
+        pub code: ScanCode,
+        /// virtual key code : top left letter is "KeyQ" on qwerty, "KeyA" on azerty
+        pub key: String,
         /// whether a shift key is pressed
         pub shift: bool,
         /// whether an alt key is pressed
@@ -294,7 +293,7 @@ pub mod events {
         fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
             write!(
                 f,
-                "{} {} {} {} {:?}",
+                "{} {} {} {:?} {}",
                 if self.shift { "shift" } else { "" },
                 if self.alt { "alt" } else { "" },
                 if self.ctrl { "ctrl" } else { "" },
@@ -308,7 +307,7 @@ pub mod events {
         fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
             write!(
                 f,
-                "{} {} {} {} {:?}",
+                "{} {} {} {:?} {}",
                 if self.shift { "shift" } else { "" },
                 if self.alt { "alt" } else { "" },
                 if self.ctrl { "ctrl" } else { "" },
