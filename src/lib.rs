@@ -16,12 +16,22 @@ extern crate glutin;
 #[cfg(not(target_arch = "wasm32"))]
 extern crate time;
 
+#[cfg(all(not(target_arch = "wasm32"), feature = "http"))]
+extern crate bytes;
+#[cfg(all(not(target_arch = "wasm32"), feature = "http"))]
+extern crate reqwest;
+
 #[cfg(not(target_arch = "wasm32"))]
 #[path = "native_app.rs"]
 /// main application struct
 pub mod sys;
 
-#[cfg(not(target_arch = "wasm32"))]
+#[cfg(all(not(target_arch = "wasm32"), feature = "http"))]
+#[path = "native_fs_http.rs"]
+/// filesystem api
+pub mod fs;
+
+#[cfg(all(not(target_arch = "wasm32"), not(feature = "http")))]
 #[path = "native_fs.rs"]
 /// filesystem api
 pub mod fs;

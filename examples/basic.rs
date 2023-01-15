@@ -24,6 +24,7 @@ fn main() {
         intercept_close_request: false,
     });
     // loading a file
+    // if the "http" feature is enabled, this would also work with an url like "https://raw.githubusercontent.com/unrust/uni-app/master/www/test.txt"
     let mut file = Some(FileSystem::open("test.txt").expect("Could not open the file test.txt.\nIn native mode, run this example in the www/ directory :\ncd www && cargo run --example basic"));
     // start game loop
     App::print("Press Escape to exit");

@@ -3,6 +3,7 @@
 ## [0.3.2] - Unreleased
 ### Added
 - filesystem example in basic.rs
+- URL support in filesystem API on native targets when enabling the http feature
 
 ## [0.3.1] - 2023-01-13
 ### Fixed

@@ -1,6 +1,5 @@
 # unrust / uni-app
 
-[![Build Status](https://travis-ci.org/unrust/uni-app.svg?branch=master)](https://travis-ci.org/unrust/uni-app)
 [![Documentation](https://docs.rs/uni-app/badge.svg)](https://docs.rs/uni-app)
 [![crates.io](https://meritbadge.herokuapp.com/uni-app)](https://crates.io/crates/uni-app)
 
@@ -8,7 +7,7 @@ This library is a part of [Unrust](https://github.com/unrust/unrust), a pure rus
 This library provides a native/wasm compatibility layer for following components :
 * Window creation
 * Input (mouse + keyboard)
-* File system (ready-only)
+* File system (local + http[s], ready-only)
 
 ## Usage
 
