@@ -1,9 +1,11 @@
 # Changelog
 
-## [0.3.2] - Unreleased
+## [0.4.0] - Unreleased
 ### Added
 - filesystem example in basic.rs
 - URL support in filesystem API on native targets when enabling the http feature
+
+    This breaks API compatibility as File::is_ready(&self) becomes File::is_ready(&mut self)
 
 ## [0.3.1] - 2023-01-13
 ### Fixed

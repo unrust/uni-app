@@ -66,7 +66,7 @@ impl File {
     /// On web target, files are loaded asynchronously.
     /// You have to poll [`File::is_ready`] until it returns true.
     /// Only then you can call [`File::read_binary`] or [`File::read_text`].
-    pub fn is_ready(&self) -> bool {
+    pub fn is_ready(&mut self) -> bool {
         true
     }
 }

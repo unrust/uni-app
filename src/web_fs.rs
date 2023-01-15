@@ -63,7 +63,7 @@ impl FileSystem {
 }
 
 impl File {
-    pub fn is_ready(&self) -> bool {
+    pub fn is_ready(&mut self) -> bool {
         let bs = self.buffer_state.borrow();
         match *bs {
             BufferState::Empty => false,
