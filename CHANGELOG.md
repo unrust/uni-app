@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.3.2] - Unreleased
+### Added
+- filesystem example in basic.rs
+
 ## [0.3.1] - 2023-01-13
 ### Fixed
 - fixed wasm target compilation

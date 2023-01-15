@@ -76,8 +76,10 @@ Open your browser at http://localhost:8080/
 
 ### As desktop app (native-opengl)
 
+Run it from the www/ directory to be able to load the test.txt file :
+
 ```
-cargo run --example basic --release
+cd www && cargo run --example basic --release
 ```
 
 ## License

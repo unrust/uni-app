@@ -13,9 +13,9 @@ pub type IoErrorKind = std::io::ErrorKind;
 impl FileSystem {
     /// open a file.
     /// For a file to be accessible from both native and web build, it should be placed
-    /// in a static/ directory in your project's root directory, for example static/config.json.
+    /// in a www/ directory in your project's root directory, for example www/config.json.
     /// You can then open this file with `FileSystem::open("config.json")`.
-    /// When packaging your native project, the file should still be in static/config.json.
+    /// When running your native project, use `cd www && cargo run`.
     /// When deploying on the web, the file should simply be in the same directory as index.html, as config.json.
     pub fn open(s: &str) -> Result<File, IoError> {
         let file = std::fs::File::open(s)?;

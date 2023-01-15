@@ -1,5 +1,5 @@
 extern crate uni_app;
-use uni_app::ScanCode;
+use uni_app::{App, AppConfig, AppEvent, FileSystem, ScanCode};
 
 #[cfg(target_arch = "wasm32")]
 use wasm_bindgen::prelude::*;
@@ -13,7 +13,7 @@ pub fn main_js() -> Result<(), JsValue> {
 
 fn main() {
     // create the game window (native) or canvas (web)
-    let app = uni_app::App::new(uni_app::AppConfig {
+    let app = App::new(AppConfig {
         size: (800, 600),
         title: "my game".to_owned(),
         vsync: true,
@@ -23,16 +23,29 @@ fn main() {
         fullscreen: false,
         intercept_close_request: false,
     });
+    // loading a file
+    let mut file = Some(FileSystem::open("test.txt").expect("Could not open the file test.txt.\nIn native mode, run this example in the www/ directory :\ncd www && cargo run --example basic"));
     // start game loop
-    uni_app::App::print("Press Escape to exit");
+    App::print("Press Escape to exit");
     app.run(move |app: &mut uni_app::App| {
+        if let Some(the_file) = &mut file {
+            if the_file.is_ready() {
+                // when the file is ready, display its content
+                let content = the_file
+                    .read_text()
+                    .expect("Could not read test.txt file's content");
+                App::print(format!("File content : {}", content));
+                // to avoid doing it every frame
+                file = None;
+            }
+        }
         for evt in app.events.borrow().iter() {
             // print on stdout (native) or js console (web)
-            uni_app::App::print(format!("{:?}", evt));
+            App::print(format!("{:?}", evt));
             // exit when pressing escape
             match &evt {
-                uni_app::AppEvent::KeyUp(ev) if ev.code == ScanCode::Escape => {
-                    uni_app::App::exit();
+                AppEvent::KeyUp(ev) if ev.code == ScanCode::Escape => {
+                    App::exit();
                 }
                 _ => (),
             }
