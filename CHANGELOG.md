@@ -1,6 +1,11 @@
 # Changelog
 
-## [0.4.0] - Unreleased
+## [0.4.1] - 2023-02-17
+### Fixed
+- scancodes for F11 and F12 (windows & linux)
+- scancode for LAlt (windows)
+
+## [0.4.0] - 2023-01-15
 ### Added
 - filesystem example in basic.rs
 - URL support in filesystem API on native targets when enabling the http feature

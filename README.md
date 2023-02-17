@@ -13,7 +13,7 @@ This library provides a native/wasm compatibility layer for following components
 
 ```toml
 [dependencies]
-uni-app = "0.3.*"
+uni-app = "0.4.*"
 ```
 
 ```rust
