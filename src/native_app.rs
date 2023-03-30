@@ -175,7 +175,12 @@ impl App {
                     None
                 })
                 .with_resizable(config.resizable)
-                .with_inner_size(LogicalSize::new(config.size.0, config.size.1));
+                .with_inner_size(LogicalSize::new(config.size.0, config.size.1))
+                .with_window_icon(
+                    if let Some((w,h,data)) = config.icon {
+                        window::Icon::from_rgba(data, w, h).ok()
+                    } else { None }
+                );
 
             let windowed_context = ContextBuilder::new()
                 .with_vsync(config.vsync)
@@ -337,3 +342,4 @@ pub fn now() -> f64 {
     // https://doc.rust-lang.org/time/time/fn.precise_time_s.html
     time::precise_time_s()
 }
+

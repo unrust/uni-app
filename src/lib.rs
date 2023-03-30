@@ -45,6 +45,14 @@ pub struct AppConfig {
     pub title: String,
     /// the window/canvas size in pixels
     pub size: (u32, u32),
+    /// The window icon : width,height,pixel data in rgba format.
+    /// winit recommends using a 32x32 image.
+    /// You can use the image crate to embed the icon in your executable at build time :
+    ///
+    /// pub static ICON: &[u8] = include_bytes!("my_icon.png");
+    /// let icon=image::load_from_memory(ICON).unwrap();
+    /// app_config.icon = Some((icon.width(),icon.height(),icon.as_bytes().to_vec()))
+    pub icon: Option<(u32,u32,Vec<u8>)>,
     /// sync frames with screen frequency (can only be disabled on native target)
     pub vsync: bool,
     /// start the program without actually creating a window, for test purposes
@@ -70,6 +78,7 @@ impl AppConfig {
             resizable: true,
             show_cursor: true,
             intercept_close_request: false,
+            icon : None,
         }
     }
 }

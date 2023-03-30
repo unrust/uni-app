@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.5.0] - 2023-03-30
+### Added
+- on native target, you can set the window icon with AppConfig.icon
+
 ## [0.4.1] - 2023-02-17
 ### Fixed
 - scancodes for F11 and F12 (windows & linux)

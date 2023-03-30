@@ -22,6 +22,7 @@ fn main() {
         resizable: true,
         fullscreen: false,
         intercept_close_request: false,
+        icon: None,
     });
     // loading a file
     // if the "http" feature is enabled, this would also work with an url like "https://raw.githubusercontent.com/unrust/uni-app/master/www/test.txt"

@@ -29,6 +29,8 @@ fn main() {
         headless: false,
         resizable: true,
         fullscreen: false,
+        intercept_close_request: false,
+        icon: None,
     });
     // start game loop
     app.run(move |app: &mut uni_app::App| {
